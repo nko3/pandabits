@@ -17,7 +17,7 @@
     });
     
     var FilesView = app.FilesView = Backbone.View.extend({
-        className: "file-tabs",
+        className: "file-tabs tabbable tabs-below",
         
         initialize: function() {
             var views = this.views = {};
@@ -31,7 +31,7 @@
         },
         
         onFileAdded: function(file) {
-            var view = this.views[file.get("id")] = new FileView({mode: file});
+            var view = this.views[file.get("id")] = new FileView({model: file});
             
             this.addFileTab(file, view);
         },
@@ -97,7 +97,7 @@
         
         ensureTabSelected: function() {
             var tabs = this.$(".nav li.active");
-            console.log(tabs);
+            
             if (tabs.length === 0) {
                 this.$(".nav li").first().addClass("active");
                 this.$(".tab-content div.tab-pane").first().addClass("active");
@@ -105,18 +105,21 @@
         }
     },{
         template: ' \
+<div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \
   <li><a href="#file-tab-content<%= info.id %>" data-file="<%= info.id %>" data-toggle="tab"><%= info.path %></a></li> \
 <% }) %> \
 </ul>  \
-<div class="tab-content"></div> \
 '
     });
     
     var StreamInputView = app.StreamInputView = Backbone.View.extend({
-        initialize: function() {
-            
+        className: "stream-input",
+        
+        initialize: function(options) {
+            this.messages = options.messages;
+            this.counter = 10;
         },
         
         render: function() {
@@ -130,7 +133,17 @@
         },
         
         onSubmitClicked: function(e) {
-            console.log("CLICKED");
+            var rawMessage = {
+                time: (new Date()).toString(),
+                user: "Itay",
+                content: this.$("input").val()
+            };
+            var message = new App.Message(rawMessage);
+            
+            App.socket.emit("message", message, function(newId) {
+                message.set("id", newId);
+            });
+            this.messages.add(message);
         }
     },{
         template: ' \
@@ -144,6 +157,7 @@
         
         initialize: function() {
             this.model.on("change:content", this.onContentChanged, this);
+            //this.model.on("change:id", this.render, this);
         },
         
         render: function() {
@@ -168,26 +182,65 @@
     });
     
     var StreamMessagesView = app.StreamMessagesView = Backbone.View.extend({
+        className: "messages-view",
+        
         initialize: function() {
+            var views = this.views = {};
+            this.collection.each(function(message) {
+                views[message.get("cid")] = new StreamMessageView({model: message}); 
+            });
+                        
+            this.collection.on("add", this.onMessageAdded, this);
+        },
+        
+        onMessageAdded: function(message) {            
+            var view = this.views[message.get("cid")] = new StreamMessageView({model: message});
             
+            this.addMessage(message, view);
         },
         
         render: function() {
+            this.$el.html('');
+            
+            var els = [];
+            _.each(this.views, function(view) {
+                els.push(view.render().el);
+            });
+            this.$el.append(els);
+            
             return this;
-        }
+        },
+        
+        addMessage: function(message, view) {
+            var scrollTop = this.$el.scrollTop();
+            var scrollHeight = this.$el.prop('scrollHeight');
+            var offsetHeight = this.$el.prop('offsetHeight');
+            
+            var scrolledAllTheWayDown = (scrollTop === (scrollHeight - offsetHeight));
+            
+            this.$el.append(view.render().el);
+            
+            var newScrollHeight = this.$el.prop('scrollHeight');
+            if (scrolledAllTheWayDown) {
+                this.$el.scrollTop(newScrollHeight);
+            }
+        },
     });
     
     var StreamView = app.StreamView = Backbone.View.extend({
-        className: "stream-window"
+        className: "stream-window",
         
-        initialize: function() {
+        initialize: function(options) {
             
-            this.messages = new StreamMessagesView({collection: options.messages});
-            this.input = new StreamInputView();    
+            this.messagesView = new StreamMessagesView({collection: options.messages});
+            this.inputView = new StreamInputView({messages: options.messages});
         },
         
         render: function() {
-        
+            this.$el.append(this.messagesView.render().el);
+            this.$el.append(this.inputView.render().el);
+            
+            return this;
         },
     });
     
