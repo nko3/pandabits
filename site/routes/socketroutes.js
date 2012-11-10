@@ -37,7 +37,8 @@ module.exports = {
             message.time = (new Date()).toString();
             message.id = messageId++;
             message.content.type = type;
-            message.content.data = response;
+            message.content.error = err || null;
+            message.content.data = response || null;
             message.content.original = originalContent;
             
             // Emit to everybody else

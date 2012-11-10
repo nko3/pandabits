@@ -95,6 +95,6 @@ setTimeout(function() {
   translator = new DebugTranslator(debuggee.pid, 5858);
   
   translator
-    .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3)
+    //.setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3)
     .cont();
 }, 1000);

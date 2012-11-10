@@ -234,27 +234,57 @@
         }
     });
     
+    var CommandContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(CommandContentView.template, {
+                original: this.content.original,
+                error: this.content.error
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } %> \
+'
+    });
+    
     var EvaluateContentView = Backbone.View.extend({
         initialize: function(options) {
             this.id = options.message.cid;
             this.content = options.message.get('content');
         },
         
-        render: function() {
+        render: function() {            
             this.$el.html(_.template(EvaluateContentView.template, {
                 original: this.content.original,
+                error: this.content.error,
+                isObject: this.content.error ? false : _.isObject(this.content.data),
+                isArray: this.content.error ? false :_.isArray(this.content.data)
             }));
             
-            if (_.isObject(this.content.data) || _.isArray(this.content.data)) {
-                var target = this.$(".evaluate-content");
-                JSONFormatter.format(this.content.data, {
-                    appendTo: target,
-                    list_id: "json" + this.id,
-                    collapse: true
-                });
-            }
-            else {
-                this.$(".evaluate-content").text(this.content.data);
+            if (this.content.data) {
+                if (_.isObject(this.content.data) || _.isArray(this.content.data)) {
+                    var target = this.$(".evaluate-content");
+                    JSONFormatter.format(this.content.data, {
+                        appendTo: target,
+                        list_id: "json" + this.id,
+                        collapse: true
+                    });
+                }
+                else {
+                    this.$(".evaluate-content").text(this.content.data);
+                }
             }
             
             return this;
@@ -264,9 +294,12 @@
 <div> \
     &gt;&gt;&nbsp<%= original %> \
 </div> \
-{ \
+<% if(error) { %> \
+    <%= error %> \
+<% } %> \
+<% if (isObject || isArray) { print(isArray ? "[" : "{") } %> \
 <div class="evaluate-content"></div> \
-} \
+<% if (isObject || isArray) { print(isArray ? "]" : "}") } %> \
 '
     });
     
@@ -276,7 +309,7 @@
             this.content = options.message.get('content');
         },
         
-        render: function() {
+        render: function() {            
             this.$el.html(_.template(BacktraceContentView.template, this.content));
             
             return this;
@@ -286,6 +319,9 @@
 <div> \
     &gt;&gt;&nbsp<%= original %> \
 </div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } else { %> \
 <table class="backtrace-table command-resposne"> \
     <tbody> \
     <% _.each(data.frames, function(frame, idx) { %> \
@@ -297,13 +333,15 @@
     <% }) %> \
     </tbody> \
 </table> \
+<% } %> \
 '
     });
     
     var ContentViews = {
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
-        "message": MessageContentView
+        "message": MessageContentView,
+        "command": CommandContentView
     };
     
     var StreamMessageView = app.StreamMessageView = Backbone.View.extend({
