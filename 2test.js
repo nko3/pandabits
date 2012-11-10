@@ -43,10 +43,10 @@ setTimeout(function() {
     
     // thing 1
     translator
-      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3, function(err, resp) {
+      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 2, function(err, resp) {
         console.log("BP1", err, resp);
       })
-      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 7, function(err, resp) {
+      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 6, function(err, resp) {
         console.log("BP2", err, resp);
       });
     
@@ -62,7 +62,14 @@ setTimeout(function() {
       });
     })
     
-    translator.cont();
+    //translator.cont();
+    translator.scripts(function(err, res) {
+      var names = res.map(function(script) {
+        return script.name;
+      })
+      
+      console.log(names);
+    });
     
     // thing 3
     //printTrace(); 
