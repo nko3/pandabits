@@ -38,6 +38,7 @@ a {
 
 .messages-view {
     height: 100%;
+    overflow-y: auto;
 }
 
 .stream-input {

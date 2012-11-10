@@ -208,8 +208,19 @@
         },
         
         addMessage: function(message, view) {
+            var scrollTop = this.$el.scrollTop();
+            var scrollHeight = this.$el.prop('scrollHeight');
+            var offsetHeight = this.$el.prop('offsetHeight');
+            
+            var scrolledAllTheWayDown = (scrollTop === (scrollHeight - offsetHeight));
+            
             this.$el.append(view.render().el);
-        }
+            
+            var newScrollHeight = this.$el.prop('scrollHeight');
+            if (scrolledAllTheWayDown) {
+                this.$el.scrollTop(newScrollHeight);
+            }
+        },
     });
     
     var StreamView = app.StreamView = Backbone.View.extend({
