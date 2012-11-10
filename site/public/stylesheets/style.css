@@ -12,9 +12,57 @@ a {
 }
 
 .gridster ul li {
-    background: teal;
+    /*background: teal;*/
+}
+
+.file-tabs {
+    height: 100%;
+}
+
+.file-tabs .tab-content {
+    height: 100%;
+}
+
+.file-tabs .tab-content .tab-pane {
+    height: 100%;
+}
+
+.file-tabs pre {
+    height: 90%;
 }
 
 .stream-window {
-    min-height: 500px;
+    height: 100%;
+    border: 1px solid #DDD;
+}
+
+.messages-view {
+    height: 100%;
+}
+
+.stream-input {
+}
+
+.message-box {
+    border-bottom: 1px solid #DDD;
+    display: table;
+    width: 100%;
+    padding: 5px;
+}
+
+.message-box .message-header {
+    font-size: 10px;
+}
+
+.message-box .message-user {
+    float: left;
+}
+
+.message-box .message-time {
+    float: right;
+}
+
+.message-box .message-content {
+    clear: both;
+    font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
 }

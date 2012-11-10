@@ -51,10 +51,15 @@
       </div>
     </div>
 
-    <div class="container">
+      <div class="gridster">
+        <ul>
+            <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" id="files"></li>
+            <li data-row="1" data-col="2" data-sizex="1" data-sizey="1" id="stream"></li>
+        </ul>
+      
       <div class="row">
-        <div class="span6" id="files">Hello</div>
-        <div class="span6" id="stream">World</div>
+        <div class="span6" id="files"></div>
+        <div class="span6" id="stream"></div>
       </div>
     
 
@@ -72,6 +77,11 @@
 
     <script>
       $(function() {
+        $(".gridster ul").gridster({
+            widget_margins: [10, 10],
+            widget_base_dimensions: [500, 600]
+        });
+        
         var rawFiles = [
           {
             id: "1",
@@ -89,14 +99,29 @@
         var filesView = new App.FilesView({collection: files});
         
         $("#files").append(filesView.render().el);
+        
+        var rawMessages = [
+          {
+            id: "1",
+            time: (new Date(0)).toString(),
+            user: "Itay",
+            content: "Hello World"
+          },
+          {
+            id: "2",
+            time: (new Date(100000)).toString(),
+            user: "Panda",
+            content: "Goodbye World"
+          },
+        ]
+        
+        var messages = new App.Messages(rawMessages);
+        var streamView = new App.StreamView({messages: messages});
+        
+        $("#stream").append(streamView.render().el);
       });
     
-    //$(function() {
-    //    $(".gridster ul").gridster({
-    //        widget_margins: [10, 10],
-    //        widget_base_dimensions: [140, 140]
-    //    });
-    //  });
+
     </script>
 
   </body>
