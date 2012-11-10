@@ -16,6 +16,7 @@
     </style>
     <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/gridster/jquery.gridster.css" rel="stylesheet">
+    <link href="/stylesheets/font-awesome.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -46,6 +47,10 @@
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
             </ul>
+            <div class="navbar-form pull-right user-form">
+              <input class="span2" type="text" value="User {{user}}"></input>
+              <a class="edit-pencil" href="#"><i class="icon-pencil"></i></a>
+            </div>
           </div>
         </div>
       </div>
@@ -69,6 +74,7 @@
     <script src="/javascripts/jquery.js"></script>
     <script src="/bootstrap/js/bootstrap.js"></script>
     <script src="/gridster/jquery.gridster.js"></script>
+    <script src='/javascripts/jquery.autosize.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/underscore.js"></script>
     <script src="/javascripts/backbone.js"></script>
@@ -79,6 +85,18 @@
     <script>
       $(function() {
         App.socket = io.connect("/{{id}}");
+        App.currentUser = new App.User({
+          id: "{{user}}",
+          name: "User {{user}}"
+        });
+        
+        App.currentUser.on("change:name", function() {
+          var oldName = App.currentUser.previous("name");
+          var newName = App.currentUser.get("name");
+          App.socket.emit("changed:username", oldName, newName);
+        });
+        
+        App.socket.emit("join", App.currentUser.toJSON());
         
         var grid = $(".gridster ul").gridster({
             widget_margins: [10, 10],
@@ -109,6 +127,8 @@
         var streamView = new App.StreamView({messages: messages});
         
         $("#stream").append(streamView.render().el);
+        
+        var usernameView = new App.UsernameView({model: App.currentUser, el: $(".user-form")});
         
         App.socket.on("message", function(message) {
           messages.add(message);

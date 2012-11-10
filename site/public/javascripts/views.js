@@ -1,4 +1,53 @@
 (function(app) {
+    KEYCODES = {
+        ENTER : 13,
+        UP_ARROW: 38,
+        DOWN_ARROW: 40,
+        LEFT_ARROW: 37,
+        RIGHT_ARROW: 39,
+        PAGE_DOWN: 34,
+        PAGE_UP: 33,
+        SPACE_BAR: 32,
+        TAB: 9,
+        ESCAPE: 27
+    };
+    
+    var UsernameView = app.UsernameView = Backbone.View.extend({
+        initialize: function() {
+            this.$input = this.$("input");  
+        },
+        
+        events: {
+            "click .edit-pencil": "onEditClicked",
+            "blur input": "onValueChanged",
+            "keydown input": "onKeyDown"
+        },
+            
+        onKeyDown: function(e) {
+            // If there is a shift press, just return true
+            if (e.shiftKey) { 
+                return true;
+            }
+            
+            if (e.keyCode === KEYCODES.ENTER) {
+                this.$input.blur();
+                return false;
+            }
+        },
+        
+        onEditClicked: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            console.log(this.$input);
+            this.$input.focus();
+        },
+        
+        onValueChanged: function(e) {
+            var newUsername = (this.$input.val() || "").trim();
+            App.currentUser.set("name", newUsername);
+        }
+    });
     
     var FileView = app.FileView = Backbone.View.extend({
         tagName: "div",
@@ -125,29 +174,48 @@
         render: function() {
             this.$el.html(_.template(StreamInputView.template));
             
+            this.$("textarea").autosize();
+            
             return this;
         },
         
         events: {
-            "click .submit-button": "onSubmitClicked"
+            "click .submit-button": "onSubmitClicked",
+            "keydown textarea": "onKeyDown"
+        },
+            
+        onKeyDown: function(e) {
+            // If there is a shift press, just return true
+            if (e.shiftKey) { 
+                return true;
+            }
+            
+            if (e.keyCode === KEYCODES.ENTER) {
+                this.onSubmitClicked();
+                return false;
+            }
         },
         
         onSubmitClicked: function(e) {
-            var rawMessage = {
-                time: (new Date()).toString(),
-                user: "Itay",
-                content: this.$("input").val()
-            };
-            var message = new App.Message(rawMessage);
+            var text = this.$("textarea").val();
             
-            App.socket.emit("message", message, function(newId) {
-                message.set("id", newId);
+            if (!text.trim()) {
+                return;
+            }
+            
+            var message = null;
+            var rawMessage = App.sendMessage(text, function(revised) {
+                message.set({id: revised.id, time: revised.time});
             });
+            message = new App.Message(rawMessage);
             this.messages.add(message);
+            
+            this.$("textarea").val('');
+            this.$("textarea").trigger("autosize");
         }
     },{
         template: ' \
-<input class="chat-input input-xlarge"> \
+<textarea class="chat-input input-xlarge"></textarea> \
 <button type="submit" class="submit-button btn">Go</button> \
 '
     });
@@ -157,13 +225,17 @@
         
         initialize: function() {
             this.model.on("change:content", this.onContentChanged, this);
-            //this.model.on("change:id", this.render, this);
+            this.model.on("change:time", this.render, this);
         },
         
         render: function() {
             this.$el.html(_.template(StreamMessageView.template, this.model.toJSON()));
             
             return this;
+        },
+        
+        updateTime: function() {
+            this.$(".message-time").text(this.model.get("time"));  
         },
         
         onContentChanged: function() {
