@@ -20,6 +20,7 @@ process.on("exit", function() {
 process.foo = "HELLO WORLD";
 process.bar = "bar";
 
+setTimeout(function() {
 var DebugTranslator = require('./lib/translator');
 var translator = new DebugTranslator(debuggee.pid, 5858);
 
@@ -27,6 +28,11 @@ var translator = new DebugTranslator(debuggee.pid, 5858);
 
 var printTrace = function() {
     translator.backtrace(function(err, trace) {
+      if (err) {
+        console.log("err", err);
+        return;
+      }
+      
       var frames = trace.frames.map(function(frame) {
         return "  " + frame.script.name + ":" + frame.line;
       })
@@ -35,44 +41,43 @@ var printTrace = function() {
     });
 }
 
-setTimeout(function() {
   var counter = 0;
   var onConnect = function(err, resp) {
     console.log("CONNECT");
     console.log(translator.isRunning());
     
     // thing 1
-    translator
-      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 2, function(err, resp) {
-        console.log("BP1", err, resp);
-      })
-      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 6, function(err, resp) {
-        console.log("BP2", err, resp);
-      });
-    
-    translator.onBreak(function(data) {
-      console.log("BREAK", data.data);
-      printTrace();
-          
-      translator.evaluateGlobal('console.log("hi")', function(err, res) {
-        console.log("args", err, res);
-        translator.mirror(res, 3, function(err, res) {
-          console.log("GO", res);
-        });
-      });
-    })
-    
+    //translator
+    //  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 2, function(err, resp) {
+    //    console.log("BP1", err, resp);
+    //  })
+    //  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 6, function(err, resp) {
+    //    console.log("BP2", err, resp);
+    //  });
+    //
+    //translator.onBreak(function(data) {
+    //  console.log("BREAK", data.data);
+    //  printTrace();
+    //      
+    //  translator.evaluateGlobal('console.log("hi")', function(err, res) {
+    //    console.log("args", err, res);
+    //    translator.mirror(res, 3, function(err, res) {
+    //      console.log("GO", res);
+    //    });
+    //  });
+    //})
+    //
     //translator.cont();
-    translator.scripts(function(err, res) {
-      var names = res.map(function(script) {
-        return script.name;
-      })
-      
-      console.log(names);
-    });
+    //translator.scripts(function(err, res) {
+    //  var names = res.map(function(script) {
+    //    return script.name;
+    //  })
+    //  
+    //  console.log(names);
+    //});
     
     // thing 3
-    //printTrace(); 
+    printTrace(); 
     
     // thing 2
     /*translator.evaluateGlobal('console.log("hi"); 1+1', function(err, res) {
