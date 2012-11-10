@@ -25,6 +25,16 @@ var translator = new DebugTranslator(debuggee.pid, 5858);
 
 //console.log("STARTING OUT");
 
+var printTrace = function() {
+    translator.backtrace(function(err, trace) {
+      var frames = trace.frames.map(function(frame) {
+        return "  " + frame.script.name + ":" + frame.line;
+      })
+      
+      console.log("Trace: " + "\n" + frames.join("\n"));
+    });
+}
+
 setTimeout(function() {
   var counter = 0;
   var onConnect = function(err, resp) {
@@ -32,7 +42,7 @@ setTimeout(function() {
     console.log(translator.isRunning());
     
     // thing 1
-    /*translator
+    translator
       .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3, function(err, resp) {
         console.log("BP1", err, resp);
       })
@@ -42,28 +52,28 @@ setTimeout(function() {
     
     translator.onBreak(function(data) {
       console.log("BREAK", data.data);
+      printTrace();
           
       translator.evaluateGlobal('console.log("hi")', function(err, res) {
         console.log("args", err, res);
         translator.mirror(res, 3, function(err, res) {
           console.log("GO", res);
-          
-          if (counter++ === 0) {
-            translator.cont();
-          }
         });
       });
     })
     
-    translator.cont();*/
+    translator.cont();
+    
+    // thing 3
+    //printTrace(); 
     
     // thing 2
-    translator.evaluateGlobal('console.log("hi")', function(err, res) {
+    /*translator.evaluateGlobal('console.log("hi"); 1+1', function(err, res) {
       console.log("args", err, res);
       translator.mirror(res, 3, function(err, res) {
         console.log("GO", res);
       });
-    });
+    });*/
   };
   
   translator.connect(onConnect);
