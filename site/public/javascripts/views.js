@@ -215,8 +215,7 @@
         }
     },{
         template: ' \
-<textarea class="chat-input input-xlarge"></textarea> \
-<button type="submit" class="submit-button btn">Go</button> \
+<textarea class="debug-input"></textarea> \
 '
     });
     
