@@ -69,6 +69,7 @@
     <script src="/javascripts/jquery.js"></script>
     <script src="/bootstrap/js/bootstrap.js"></script>
     <script src="/gridster/jquery.gridster.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/underscore.js"></script>
     <script src="/javascripts/backbone.js"></script>
     <script src="/javascripts/router.js"></script>
@@ -77,6 +78,8 @@
 
     <script>
       $(function() {
+        App.socket = io.connect("/abc");
+        
         var grid = $(".gridster ul").gridster({
             widget_margins: [10, 10],
             widget_base_dimensions: [500, 600]
@@ -102,28 +105,16 @@
         
         $("#files").append(filesView.render().el);
         
-        var rawMessages = [
-          {
-            id: "1",
-            time: (new Date(0)).toString(),
-            user: "Itay",
-            content: "Hello World"
-          },
-          {
-            id: "2",
-            time: (new Date(100000)).toString(),
-            user: "Panda",
-            content: "Goodbye World"
-          },
-        ]
-        
-        var messages = new App.Messages(rawMessages);
+        var messages = new App.Messages();
         var streamView = new App.StreamView({messages: messages});
         
         $("#stream").append(streamView.render().el);
+        
+        App.socket.on("message", function(message) {
+          messages.add(message);
+        });
+        
       });
-    
-
     </script>
 
   </body>

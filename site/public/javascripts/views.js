@@ -133,13 +133,16 @@
         },
         
         onSubmitClicked: function(e) {
-            var message = {
-                id: this.counter++,
+            var rawMessage = {
                 time: (new Date()).toString(),
                 user: "Itay",
                 content: this.$("input").val()
             };
+            var message = new App.Message(rawMessage);
             
+            App.socket.emit("message", message, function(newId) {
+                message.set("id", newId);
+            });
             this.messages.add(message);
         }
     },{
@@ -154,6 +157,7 @@
         
         initialize: function() {
             this.model.on("change:content", this.onContentChanged, this);
+            //this.model.on("change:id", this.render, this);
         },
         
         render: function() {
@@ -183,14 +187,14 @@
         initialize: function() {
             var views = this.views = {};
             this.collection.each(function(message) {
-                views[message.get("id")] = new StreamMessageView({model: message}); 
+                views[message.get("cid")] = new StreamMessageView({model: message}); 
             });
                         
             this.collection.on("add", this.onMessageAdded, this);
         },
         
         onMessageAdded: function(message) {            
-            var view = this.views[message.get("id")] = new StreamMessageView({model: message});
+            var view = this.views[message.get("cid")] = new StreamMessageView({model: message});
             
             this.addMessage(message, view);
         },

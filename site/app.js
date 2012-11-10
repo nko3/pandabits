@@ -9,8 +9,13 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var _ = require('underscore');
+var socketio = require('socket.io');
 
 var app = express();
+
+var server = http.createServer(app); 
+var io = socketio.listen(server);
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -42,7 +47,14 @@ app.get('/test', function(req, res){
   res.render('test.html');
 });
 
+var routes = require('./routes/socketroutes')
 
-http.createServer(app).listen(app.get('port'), function(){
+io.of("/abc").on('connection', function(socket) {
+  _.each(routes, function(route, routeName) {
+    socket.on(routeName, route);
+  });
+});
+
+server.listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));
 });
