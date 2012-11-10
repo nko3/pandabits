@@ -1,0 +1,20 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.gridster ul, .gridster ol {
+    list-style: none;
+}
+
+.gridster ul li {
+    background: teal;
+}
+
+.stream-window {
+    min-height: 500px;
+}
