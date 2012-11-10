@@ -4,8 +4,6 @@
  */
 
 var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
@@ -20,14 +18,11 @@ var io = socketio.listen(server);
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  // make a custom html template
-  app.engine('.html', function(path, options, callback){
-      fs.readFile(path, function(err, file) {
-        callback(err, err ? null : file.toString("utf-8"));
-      });
-    }
-  );
+  app.set('view options', {
+    layout: false
+  });
+  app.set('view engine', 'html');
+  app.engine('html', require('hbs').__express);
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -40,8 +35,17 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/debug/:id', function(req, res) {
+  var id = req.params.id;
+  
+  if (!_.has(io.sockets.manager.namespaces, "/" + id)) {
+    listenOnNamespace(id);
+  }
+  
+  res.render('test.html', {
+    id: id
+  });
+});
 
 app.get('/test', function(req, res){
   res.render('test.html');
@@ -49,11 +53,13 @@ app.get('/test', function(req, res){
 
 var routes = require('./routes/socketroutes')
 
-io.of("/abc").on('connection', function(socket) {
-  _.each(routes, function(route, routeName) {
-    socket.on(routeName, route);
+var listenOnNamespace = function(namespace) {
+  io.of("/" + namespace).on('connection', function(socket) {
+    _.each(routes, function(route, routeName) {
+      socket.on(routeName, route);
+    });
   });
-});
+};
 
 server.listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));

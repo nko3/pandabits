@@ -78,7 +78,7 @@
 
     <script>
       $(function() {
-        App.socket = io.connect("/abc");
+        App.socket = io.connect("/{{id}}");
         
         var grid = $(".gridster ul").gridster({
             widget_margins: [10, 10],
