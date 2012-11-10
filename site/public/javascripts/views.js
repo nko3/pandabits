@@ -1,4 +1,17 @@
 (function(app) {
+    KEYCODES = {
+        ENTER : 13,
+        UP_ARROW: 38,
+        DOWN_ARROW: 40,
+        LEFT_ARROW: 37,
+        RIGHT_ARROW: 39,
+        PAGE_DOWN: 34,
+        PAGE_UP: 33,
+        SPACE_BAR: 32,
+        TAB: 9,
+        ESCAPE: 27
+    };
+    
     var UsernameView = app.UsernameView = Backbone.View.extend({
         initialize: function() {
             this.$input = this.$("input");  
@@ -6,7 +19,20 @@
         
         events: {
             "click .edit-pencil": "onEditClicked",
-            "blur input": "onValueChanged"
+            "blur input": "onValueChanged",
+            "keydown input": "onKeyDown"
+        },
+            
+        onKeyDown: function(e) {
+            // If there is a shift press, just return true
+            if (e.shiftKey) { 
+                return true;
+            }
+            
+            if (e.keyCode === KEYCODES.ENTER) {
+                this.$input.blur();
+                return false;
+            }
         },
         
         onEditClicked: function(e) {
@@ -148,25 +174,48 @@
         render: function() {
             this.$el.html(_.template(StreamInputView.template));
             
+            this.$("textarea").autosize();
+            
             return this;
         },
         
         events: {
-            "click .submit-button": "onSubmitClicked"
+            "click .submit-button": "onSubmitClicked",
+            "keydown textarea": "onKeyDown"
+        },
+            
+        onKeyDown: function(e) {
+            // If there is a shift press, just return true
+            if (e.shiftKey) { 
+                return true;
+            }
+            
+            if (e.keyCode === KEYCODES.ENTER) {
+                this.onSubmitClicked();
+                return false;
+            }
         },
         
         onSubmitClicked: function(e) {
-            var text = this.$("input").val();
+            var text = this.$("textarea").val();
+            
+            if (!text.trim()) {
+                return;
+            }
+            
             var message = null;
             var rawMessage = App.sendMessage(text, function(revised) {
                 message.set({id: revised.id, time: revised.time});
             });
             message = new App.Message(rawMessage);
             this.messages.add(message);
+            
+            this.$("textarea").val('');
+            this.$("textarea").trigger("autosize");
         }
     },{
         template: ' \
-<input class="chat-input input-xlarge"> \
+<textarea class="chat-input input-xlarge"></textarea> \
 <button type="submit" class="submit-button btn">Go</button> \
 '
     });

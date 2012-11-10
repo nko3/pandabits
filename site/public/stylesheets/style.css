@@ -42,6 +42,11 @@ a {
 }
 
 .stream-input {
+    margin-top: 10px;
+}
+
+.stream-input textarea {
+    margin-bottom: 0px;
 }
 
 .message-box {
