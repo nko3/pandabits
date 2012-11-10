@@ -131,13 +131,13 @@
         var usernameView = new App.UsernameView({model: App.currentUser, el: $(".user-form")});
         
         App.socket.on("message", function(message) {          
-          if (message.user == "Console Output" && messages.length > 0) {
+          /*if (message.user == "Console Output" && messages.length > 0) {
             var lastMessage = messages.at(messages.length - 1);
             if (lastMessage.get("user") === message.user) {
               lastMessage.set("content", lastMessage.get("content") + message.content);
               return;
             }
-          }
+          }*/
           
           messages.add(message);
         });

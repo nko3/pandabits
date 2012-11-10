@@ -9,7 +9,10 @@
     window.App.sendMessage = function(message, fn) {
         message = {
             user: App.currentUser.get("name", fn),
-            content: message,
+            content: {
+                data: message,
+                type: "message"
+            },
             time: (new Date()).toString()
         }
         

@@ -205,7 +205,7 @@
             
             var message = null;
             var rawMessage = App.sendMessage(text, function(revised) {
-                message.set({id: revised.id, time: revised.time});
+                message.set({id: revised.id, time: revised.time, content: revised.content});
             });
             message = new App.Message(rawMessage);
             this.messages.add(message);
@@ -220,16 +220,56 @@
 '
     });
     
+    var MessageContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.data = options.data;
+        },
+        
+        render: function() {
+            this.$el.html('');
+            this.$el.text(this.data);
+            
+            return this;
+        }
+    });
+    
+    var BacktraceContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.data = options.data;
+            
+            console.log("BACKTRACE", this.data);
+        },
+        
+        render: function() {
+            this.$el.html('');
+            this.$el.text(this.data);
+            
+            return this;
+        }
+    });
+    
+    var ContentViews = {
+        "backtrace": BacktraceContentView,
+        "message": MessageContentView
+    };
+    
     var StreamMessageView = app.StreamMessageView = Backbone.View.extend({
         className: "message-box",
         
-        initialize: function() {
-            this.model.on("change:content", this.onContentChanged, this);
+        initialize: function() {            
             this.model.on("change:time", this.render, this);
+            this.model.on("change:content", this.onContentChanged, this)
         },
         
         render: function() {
             this.$el.html(_.template(StreamMessageView.template, this.model.toJSON()));
+          
+            if (this.contentView) {
+                this.contentView.render();
+            }
+            else {
+                this.contentView = this.createContentView().render();
+            }
             
             return this;
         },
@@ -238,8 +278,26 @@
             this.$(".message-time").text(this.model.get("time"));  
         },
         
+        createContentView: function() {                
+            var content = this.model.get("content");
+            var contentType = content.type;
+            var contentData = content.data;
+            
+            if (!_.has(ContentViews, contentType)) {
+                return;
+            }
+            
+            this.contentView = new ContentViews[contentType]({
+                data: contentData,
+                el: this.$(".message-content")
+            });
+            
+            return this.contentView;
+        },
+        
         onContentChanged: function() {
-            this.$(".message-content pre").text(this.model.get("content"));
+            this.createContentView();
+            this.contentView.render();
         }
     },{
         template: ' \
@@ -247,9 +305,7 @@
     <span class="message-user"><%= user %></span> \
     <span class="message-time"><%= time %></span> \
 </div> \
-<div class="message-content"> \
-    <pre><%= content %></pre> \
-</div> \
+<div class="message-content"></div> \
 '
     });
     
