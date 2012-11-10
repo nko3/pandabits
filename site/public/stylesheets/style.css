@@ -75,6 +75,7 @@ a {
     max-width: 100%;
     clear: both;
     font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+    font-size: 12px;
 }
 
 .message-box .message-content pre {
@@ -118,4 +119,20 @@ a {
     color: white;
     line-height: 0px;
     text-decoration: none
+}
+
+.backtrace-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.backtrace-table tbody, .backtrace-table tr {
+    width: 100%;
+}
+
+.backtrace-index {
+    width: 30px;
+}
+
+.backtrace-file {
 }

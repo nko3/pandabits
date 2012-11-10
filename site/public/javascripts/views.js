@@ -222,34 +222,87 @@
     
     var MessageContentView = Backbone.View.extend({
         initialize: function(options) {
-            this.data = options.data;
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
         },
         
         render: function() {
             this.$el.html('');
-            this.$el.text(this.data);
+            this.$el.text(this.content.data);
             
             return this;
         }
+    });
+    
+    var EvaluateContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {
+            this.$el.html(_.template(EvaluateContentView.template, {
+                original: this.content.original,
+            }));
+            
+            if (_.isObject(this.content.data) || _.isArray(this.content.data)) {
+                var target = this.$(".evaluate-content");
+                JSONFormatter.format(this.content.data, {
+                    appendTo: target,
+                    list_id: "json" + this.id,
+                    collapse: true
+                });
+            }
+            else {
+                this.$(".evaluate-content").text(this.content.data);
+            }
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+{ \
+<div class="evaluate-content"></div> \
+} \
+'
     });
     
     var BacktraceContentView = Backbone.View.extend({
         initialize: function(options) {
-            this.data = options.data;
-            
-            console.log("BACKTRACE", this.data);
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
         },
         
         render: function() {
-            this.$el.html('');
-            this.$el.text(this.data);
+            this.$el.html(_.template(BacktraceContentView.template, this.content));
             
             return this;
         }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<table class="backtrace-table command-resposne"> \
+    <tbody> \
+    <% _.each(data.frames, function(frame, idx) { %> \
+        <tr> \
+            <td class="backtrace-index"><%= idx %></td> \
+            <td class="backtrace-file"><%= frame.script.name %>:<%= frame.line %></td> \
+            <!--<td class="backtrace-function"><% print(frame.func.inferredName || frame.func.name || "anonymous") %></td>--> \
+        </tr> \
+    <% }) %> \
+    </tbody> \
+</table> \
+'
     });
     
     var ContentViews = {
         "backtrace": BacktraceContentView,
+        "evaluate": EvaluateContentView,
         "message": MessageContentView
     };
     
@@ -288,7 +341,7 @@
             }
             
             this.contentView = new ContentViews[contentType]({
-                data: contentData,
+                message: this.model,
                 el: this.$(".message-content")
             });
             

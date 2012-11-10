@@ -1,4 +1,6 @@
 function test2(counter) {
+    var d = {a: 1, b: 2, c: { d: 5, e: [1,2,3]}};
+    
     var a = 1;
     console.log("Counter: ", counter);
 }

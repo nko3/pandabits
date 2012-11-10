@@ -31,11 +31,14 @@ module.exports = {
         var socket = this;
 
         var dispatch = dispatcher.dispatchers[socket.namespace.name];
+        
+        var originalContent = message.content.data;        
         dispatch(message.content.data, function(err, type, response) {
             message.time = (new Date()).toString();
             message.id = messageId++;
             message.content.type = type;
             message.content.data = response;
+            message.content.original = originalContent;
             
             // Emit to everybody else
             socket.broadcast.emit("message", message);

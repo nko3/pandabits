@@ -1,0 +1,25 @@
+ul.formatted-json {
+  margin-left: 5px;
+  padding: 0; 
+}
+  
+ul.formatted-json i, ul.formatted-json b {
+  color: black;
+  font-style: normal; 
+}
+  
+ul.formatted-json ul {
+  margin: 3px 0 0 20px;
+  padding: 0; 
+}
+  
+ul.formatted-json li {
+  padding: 0 0 3px;
+  list-style-type: none;
+  margin: 0;
+  color: #666666; 
+}
+
+ul.formatted-json span.toggle {
+  cursor: pointer;
+}
