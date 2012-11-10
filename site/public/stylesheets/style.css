@@ -139,3 +139,19 @@ a {
 
 .backtrace-file {
 }
+
+.breakpoint-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.breakpoint-table tbody, .breakpoint-table tr {
+    width: 100%;
+}
+
+.breakpoint-index {
+    width: 50px;
+}
+
+.breakpoint-file {
+}
