@@ -77,10 +77,12 @@
 
     <script>
       $(function() {
-        $(".gridster ul").gridster({
+        var grid = $(".gridster ul").gridster({
             widget_margins: [10, 10],
             widget_base_dimensions: [500, 600]
-        });
+        }).data("gridster");
+        
+        grid.disable();
         
         var rawFiles = [
           {
