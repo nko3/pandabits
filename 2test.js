@@ -27,9 +27,10 @@ var counter = 0;
 var onConnect = function(err, resp) {
   translator.onBreak(function() {
     console.log("BREAK");
-    translator.backtrace(function(err, trace) {
-      console.log("TRACE", counter++, err, trace);
-      translator.cont();
+    translator.evaluateGlobal('console.log("hi")', function(err, res) {
+      translator.mirror(res, 3, function(err, res) {
+        console.log(res);
+      });
     });
   })
 };
