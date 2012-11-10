@@ -94,7 +94,7 @@ setTimeout(function() {
   var DebugTranslator = require('../lib/translator');
   translator = new DebugTranslator(debuggee.pid, 5858);
   
-  translator
-    //.setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3)
-    .cont();
-}, 1000);
+  translator.cont();
+  
+  
+}, 100);
