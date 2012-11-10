@@ -76,6 +76,7 @@ setTimeout(function() {
     });*/
   };
   
-  translator.connect(onConnect);
+  //translator.connect(onConnect);
+  onConnect();
     
 }, 1000); 
