@@ -46,37 +46,35 @@ var printTrace = function() {
     console.log("CONNECT");
     console.log(translator.isRunning());
     
-    // thing 1
-    //translator
-    //  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 2, function(err, resp) {
-    //    console.log("BP1", err, resp);
-    //  })
-    //  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 6, function(err, resp) {
-    //    console.log("BP2", err, resp);
-    //  });
-    //
-    //translator.onBreak(function(data) {
-    //  console.log("BREAK", data.data);
-    //  printTrace();
-    //      
-    //  translator.evaluateGlobal('console.log("hi")', function(err, res) {
-    //    console.log("args", err, res);
-    //    translator.mirror(res, 3, function(err, res) {
-    //      console.log("GO", res);
-    //    });
-    //  });
-    //})
-    //
-    //translator.cont();
-    //translator.scripts(function(err, res) {
-    //  var names = res.map(function(script) {
-    //    return script.name;
-    //  })
-    //  
-    //  console.log(names);
-    //});
+    //thing 1
+    translator
+      .setBreakpoint('/Volumes/code/code/pandabits/test/test.js', 2, function(err, resp) {
+        console.log("BP1", err, resp);
+      })
     
-    // thing 3
+    translator.onBreak(function(data) {
+      console.log("BREAK", data.data);
+      printTrace();
+          
+      translator.evaluateGlobal('console.log("hi")', function(err, res) {
+        console.log("args", err, res);
+        translator.mirror(res, 3, function(err, res) {
+          console.log("GO", res);
+        });
+      });
+      translator.stepIn(1, function(err, res) {console.log("step", err, res);});
+    })
+    
+    translator.cont();
+    translator.scripts(function(err, res) {
+      var names = res.map(function(script) {
+        return script.name;
+      })
+      
+      console.log(names);
+    });
+    
+    //thing 3
     printTrace(); 
     
     // thing 2
