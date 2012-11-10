@@ -239,7 +239,7 @@
         },
         
         onContentChanged: function() {
-            this.$(".message-content").text(this.model.get("content"));
+            this.$(".message-content pre").text(this.model.get("content"));
         }
     },{
         template: ' \
@@ -248,7 +248,7 @@
     <span class="message-time"><%= time %></span> \
 </div> \
 <div class="message-content"> \
-    <%= content %> \
+    <pre><%= content %></pre> \
 </div> \
 '
     });
@@ -259,7 +259,8 @@
         initialize: function() {
             var views = this.views = {};
             this.collection.each(function(message) {
-                views[message.get("cid")] = new StreamMessageView({model: message}); 
+                var view = views[message.get("cid")] = new StreamMessageView({model: message}); 
+                view.on("update", this.ensureScroll, this);
             });
                         
             this.collection.on("add", this.onMessageAdded, this);
@@ -267,6 +268,7 @@
         
         onMessageAdded: function(message) {            
             var view = this.views[message.get("cid")] = new StreamMessageView({model: message});
+            view.on("update", this.ensureScroll, this);
             
             this.addMessage(message, view);
         },
@@ -297,6 +299,10 @@
                 this.$el.scrollTop(newScrollHeight);
             }
         },
+        
+        ensureScroll: function() {
+            
+        }
     });
     
     var StreamView = app.StreamView = Backbone.View.extend({
