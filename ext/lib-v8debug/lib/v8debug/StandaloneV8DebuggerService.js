@@ -33,8 +33,8 @@ var StandaloneV8DebuggerService = module.exports = function(socket) {
             self.$reader.destroy();
             self.emit("connect");
             self.$reader = new MessageReader(self.$socket, self.$onMessage.bind(self));
-            callback();
         });
+        callback();
     };
 
     this.detach = function(tabId, callback) {

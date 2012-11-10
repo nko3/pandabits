@@ -23,23 +23,49 @@ process.bar = "bar";
 var DebugTranslator = require('./lib/translator');
 var translator = new DebugTranslator(debuggee.pid, 5858);
 
-var counter = 0;
-var onConnect = function(err, resp) {
-  translator.onBreak(function() {
-    console.log("BREAK");
+//console.log("STARTING OUT");
+
+setTimeout(function() {
+  var counter = 0;
+  var onConnect = function(err, resp) {
+    console.log("CONNECT");
+    console.log(translator.isRunning());
+    
+    // thing 1
+    /*translator
+      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3, function(err, resp) {
+        console.log("BP1", err, resp);
+      })
+      .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 7, function(err, resp) {
+        console.log("BP2", err, resp);
+      });
+    
+    translator.onBreak(function(data) {
+      console.log("BREAK", data.data);
+          
+      translator.evaluateGlobal('console.log("hi")', function(err, res) {
+        console.log("args", err, res);
+        translator.mirror(res, 3, function(err, res) {
+          console.log("GO", res);
+          
+          if (counter++ === 0) {
+            translator.cont();
+          }
+        });
+      });
+    })
+    
+    translator.cont();*/
+    
+    // thing 2
     translator.evaluateGlobal('console.log("hi")', function(err, res) {
+      console.log("args", err, res);
       translator.mirror(res, 3, function(err, res) {
-        console.log(res);
+        console.log("GO", res);
       });
     });
-  })
-};
-
-translator.connect(onConnect)
-  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 3, function(err, resp) {
-    console.log("BP1", err, resp);
-  })
-  .setBreakpoint('/Users/ineeman/Work/pandabits/test/test.js', 7, function(err, resp) {
-    console.log("BP2", err, resp);
-  });
+  };
   
+  translator.connect(onConnect);
+    
+}, 1000); 
