@@ -35,6 +35,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+var userCounter = 20;
 app.get('/debug/:id', function(req, res) {
   var id = req.params.id;
   
@@ -43,7 +44,8 @@ app.get('/debug/:id', function(req, res) {
   }
   
   res.render('test.html', {
-    id: id
+    id: id,
+    user: userCounter++
   });
 });
 

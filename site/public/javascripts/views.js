@@ -1,4 +1,27 @@
 (function(app) {
+    var UsernameView = app.UsernameView = Backbone.View.extend({
+        initialize: function() {
+            this.$input = this.$("input");  
+        },
+        
+        events: {
+            "click .edit-pencil": "onEditClicked",
+            "blur input": "onValueChanged"
+        },
+        
+        onEditClicked: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            console.log(this.$input);
+            this.$input.focus();
+        },
+        
+        onValueChanged: function(e) {
+            var newUsername = (this.$input.val() || "").trim();
+            App.currentUser.set("name", newUsername);
+        }
+    });
     
     var FileView = app.FileView = Backbone.View.extend({
         tagName: "div",
@@ -133,16 +156,12 @@
         },
         
         onSubmitClicked: function(e) {
-            var rawMessage = {
-                time: (new Date()).toString(),
-                user: "Itay",
-                content: this.$("input").val()
-            };
-            var message = new App.Message(rawMessage);
-            
-            App.socket.emit("message", message, function(newId) {
-                message.set("id", newId);
+            var text = this.$("input").val();
+            var message = null;
+            var rawMessage = App.sendMessage(text, function(revised) {
+                message.set({id: revised.id, time: revised.time});
             });
+            message = new App.Message(rawMessage);
             this.messages.add(message);
         }
     },{
@@ -157,13 +176,17 @@
         
         initialize: function() {
             this.model.on("change:content", this.onContentChanged, this);
-            //this.model.on("change:id", this.render, this);
+            this.model.on("change:time", this.render, this);
         },
         
         render: function() {
             this.$el.html(_.template(StreamMessageView.template, this.model.toJSON()));
             
             return this;
+        },
+        
+        updateTime: function() {
+            this.$(".message-time").text(this.model.get("time"));  
         },
         
         onContentChanged: function() {
