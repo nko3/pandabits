@@ -370,9 +370,16 @@
             this.content = options.message.get('content');
         },
         
-        render: function() {            
-            this.$el.html(_.template(ListBreakpointsContentView.template, this.content));
-            console.log(this.content);
+        render: function() {   
+            var error = this.content.error;
+            var data = this.content.data;
+            var breakpoints = data.breakpoints;
+            
+            this.$el.html(_.template(ListBreakpointsContentView.template, {
+                original: this.content.original,
+                error: error || (breakpoints.length === 0 ? "No breakpoints" : null),
+                data: this.content.data
+            }));
             
             return this;
         }
