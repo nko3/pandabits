@@ -52,6 +52,7 @@ a {
 }
 
 .message-box .message-header {
+    width: 100%;
     font-size: 10px;
 }
 
@@ -60,10 +61,13 @@ a {
 }
 
 .message-box .message-time {
-    float: right;
+    float: left;
+    font-style: italic;
+    margin-left: 10px;
 }
 
 .message-box .message-content {
+    max-width: 100%;
     clear: both;
     font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
 }
