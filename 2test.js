@@ -48,24 +48,27 @@ var printTrace = function() {
     
     //thing 1
     translator
-      .setBreakpoint('/Volumes/code/code/pandabits/test/test.js', 2, function(err, resp) {
+      .setBreakpoint('/Volumes/code/code/pandabits/test/test.js', 5, function(err, resp) {
         console.log("BP1", err, resp);
       })
     
     translator.onBreak(function(data) {
-      console.log("BREAK", data.data);
-      printTrace();
+        console.log("BREAK " + counter, data.data);
+        counter = counter + 1;
+        //printTrace();
+        console.log(translator.broken, translator.linenum, translator.script, translator.frame, translator.maxFrames);
+        if (counter == 1) {
+             translator.cont();
+        }
+        else {
+            translator.setFrame(translator.frame + 1, function(err, data) {
+                console.log("SetFrame ", err, data);
+            });
+        }
+        console.log(translator.broken, translator.linenum, translator.script, translator.frame, translator.maxFrames);
           
-      translator.evaluateGlobal('console.log("hi")', function(err, res) {
-        console.log("args", err, res);
-        translator.mirror(res, 3, function(err, res) {
-          console.log("GO", res);
-        });
       });
-      translator.stepIn(1, function(err, res) {console.log("step", err, res);});
-    })
-    
-    translator.cont();
+      //translator.stepIn(1, function(err, res) {console.log("step", err, res);});
     translator.scripts(function(err, res) {
       var names = res.map(function(script) {
         return script.name;
@@ -73,9 +76,8 @@ var printTrace = function() {
       
       console.log(names);
     });
-    
     //thing 3
-    printTrace(); 
+    //printTrace(); 
     
     // thing 2
     /*translator.evaluateGlobal('console.log("hi"); 1+1', function(err, res) {
@@ -86,7 +88,7 @@ var printTrace = function() {
     });*/
   };
   
-  //translator.connect(onConnect);
-  onConnect();
+  translator.connect(onConnect);
+  //onConnect();
     
 }, 1000); 
