@@ -258,6 +258,34 @@
 '
     });
     
+    var BreakpointCommandContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(CommandContentView.template, {
+                original: this.content.original,
+                error: this.content.error,
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } else { %> \
+    <span><%= data.breakpoint %>: </span><%= data.script_name %>:<%= data.line %> \
+<% } %> \
+'
+    });
+    
     var EvaluateContentView = Backbone.View.extend({
         initialize: function(options) {
             this.id = options.message.cid;
@@ -336,10 +364,46 @@
 '
     });
     
+    var ListBreakpointsContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(ListBreakpointsContentView.template, this.content));
+            console.log(this.content);
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } else { %> \
+<table class="breakpoint-table command-resposne"> \
+    <tbody> \
+    <% _.each(data.breakpoints, function(breakpoint, idx) { %> \
+        <tr> \
+            <td class="breakpoint-index"><%= breakpoint.number %><% print(breakpoint.active ? "(e)" : "(d)") %></td> \
+            <td class="breakpoint-file"><%= breakpoint.script_name %>:<%= breakpoint.line %></td> \
+        </tr> \
+    <% }) %> \
+    </tbody> \
+</table> \
+<% } %> \
+'
+    });
+    
     var ContentViews = {
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
         "message": MessageContentView,
+        "breakpoint": BreakpointCommandContentView,
+        "listbreakpoints": ListBreakpointsContentView,
         "command": CommandContentView
     };
     
