@@ -13,15 +13,14 @@
         BREAK: 19
     };
         
-    //$(window).on("keydown", function(e) {
-    //    console.log("BOO", e);
-    //    if (e.ctrlKey && e.keyCode === KEYCODES.BREAK) {
-    //        console.log("BREAK");
-    //        return false;
-    //    } 
-    //    
-    //    return true;
-    //});
+    $(window).on("keydown", function(e) {
+        if (e.shiftKey && e.keyCode === KEYCODES.ESCAPE) {
+            App.sendMessage("!pause");
+            return false;
+        } 
+        
+        return true;
+    });
     
     var UsernameView = app.UsernameView = Backbone.View.extend({
         initialize: function() {
@@ -838,7 +837,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         <tr><td class="help-key">page up</td><td>go up in command history</td></tr> \
         <tr><td class="help-key">page down</td><td>go down in command history</td></tr> \
         <tr><td class="help-key">esc</td><td>clear command</td></tr> \
-        <tr><td class="help-key">ctrl+break</td><td>pause debugger</td></tr> \
+        <tr><td class="help-key">shift+esc</td><td>pause debugger</td></tr> \
     </tbody> \
 </table> \
 ',
