@@ -9,17 +9,22 @@
 
     <!-- Le styles -->
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
     <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/gridster/jquery.gridster.css" rel="stylesheet">
     <link href="/stylesheets/font-awesome.css" rel="stylesheet">
     <link href="/stylesheets/jsonformatter.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
 
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      
+      .gridster {
+        margin-left: -45px;
+      }
+    </style>
+    
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -62,10 +67,6 @@
             <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" id="files"></li>
             <li data-row="1" data-col="2" data-sizex="1" data-sizey="1" id="stream"></li>
         </ul>
-      
-      <div class="row">
-        <div class="span6" id="files"></div>
-        <div class="span6" id="stream"></div>
       </div>
     
 
@@ -75,6 +76,7 @@
     <script src="/javascripts/jquery.js"></script>
     <script src="/bootstrap/js/bootstrap.js"></script>
     <script src="/gridster/jquery.gridster.js"></script>
+    <script src="/gridster/jquery.gridster.with-extras.js"></script>
     <script src='/javascripts/jquery.autosize.js'></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/underscore.js"></script>
@@ -83,6 +85,7 @@
     <script src="/javascripts/models.js"></script>
     <script src="/javascripts/views.js"></script>
     <script src="/javascripts/jsonformatter.js"></script>
+    <script src="/javascripts/jquery.scrollto.js"></script>
 
     <script>
       $(function() {
@@ -100,9 +103,29 @@
         
         App.socket.emit("join", App.currentUser.toJSON());
         
+        var hMargin = 5;
+        var vMargin = 5;
+        var height = $(window).height() - 44 - 100;
+        var width = $(window).width() - 15;
+        var baseWidth = (width - 4*hMargin)  / 2;
+        var baseHeight = height;
+        
+        $(window).resize(function() {
+          var height = $(window).height() - 44 - 100;
+          var width = $(window).width() - 15;
+          var baseWidth = (width - 4*hMargin)  / 2;
+          var baseHeight = height;
+        
+          console.log(baseWidth, baseHeight, $(window).height(height + 44 + 70));
+          
+          grid.resize_widget_dimensions({
+            widget_base_dimensions: [baseWidth, baseHeight]
+          });
+        }); 
+        
         var grid = $(".gridster ul").gridster({
-            widget_margins: [10, 10],
-            widget_base_dimensions: [500, 600]
+            widget_margins: [hMargin, vMargin],
+            widget_base_dimensions: [baseWidth, baseHeight]
         }).data("gridster");
         
         grid.disable();

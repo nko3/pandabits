@@ -6,9 +6,10 @@
     window.App = new Router();
     window.App.Router = Router;
     
-    window.App.sendMessage = function(message, fn) {
+    window.App.sendMessage = function(message, silent) {
         message = {
-            user: App.currentUser.get("name", fn),
+            user: App.currentUser.get("name"),
+            silent: silent === undefined ? false : silent,
             content: {
                 data: message,
                 type: "message"
@@ -16,18 +17,13 @@
             time: (new Date()).toString()
         }
         
-        fn = fn || function() {};
-        
-        App.socket.emit("message", message, function(response) {
-            App.handleMessage(response, true);
-            fn(response);
-        });
+        App.socket.emit("message", message);
         
         return message;
     },
     
-    window.App.handleMessage = function(message, dontAdd) {
-        if (!dontAdd) {
+    window.App.handleMessage = function(message) {
+        if (!message.silent || !message.hasOwnProperty("silent")) {
             App.messages.add(message);
         }
         
@@ -49,6 +45,14 @@
                 App.breakpoints.each(function(breakpoint) {
                     App.breakpoints.trigger("add", breakpoint, App.breakpoints); 
                 });
+                
+                if (App.highlight) {
+                    var file = App.files.get(App.highlight.script);
+                    if (file) {
+                        App.trigger("change:active", file);
+                        file.set("highlight", App.highlight.line);
+                    }
+                }
                 
                 break;
             }
@@ -76,6 +80,43 @@
                         App.breakpoints.add(breakpoint);
                     });
                 }
+                break;
+            }
+            case "go": {
+                if (App.highlight) {
+                    var file = App.files.get(App.highlight.script);
+                    if (file) {
+                        file.unset("highlight");
+                    }
+                    App.highlight = null;
+                }
+                break;
+            }
+            case "break": {
+                var br = message.content.data.data;
+                
+                if (App.highlight) {
+                    var prevFile = App.files.get(App.highlight.script);
+                    if (prevFile) {
+                        prevFile.unset("highlight");
+                    }
+                    App.highlight = null;
+                }
+                
+                App.highlight = {
+                    script: br.script.name,
+                    line: br.sourceLine
+                };
+                    
+                var file = App.files.get(br.script.name);
+                if (!file) {
+                    App.sendMessage("!loadfile " + br.script.name, true);
+                }
+                else {
+                    App.trigger("change:active", file);
+                    file.set("highlight", br.sourceLine);
+                }
+                
                 break;
             }
         }

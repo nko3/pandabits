@@ -19,6 +19,17 @@ a {
     height: 100%;
 }
 
+.file-tabs ul.nav {
+    margin-top: 9px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.file-tabs ul.nav li {
+    display: table-cell;
+    float: none;
+}
+
 .file-tabs .tab-content {
     height: 100%;
     border: 1px solid #DDD;
@@ -49,6 +60,10 @@ a {
 
 .file-tabs pre span.breakpointset {
     background-color: #FDD;
+}
+
+.file-tabs pre span.currentline {
+    background-color: #EE9;
 }
 
 .file-table td.linenos {

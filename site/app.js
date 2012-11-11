@@ -64,6 +64,12 @@ var listenOnNamespace = function(namespace) {
   });
   
   dispatcher.createDispatcher("/" + namespace, translator);
+  translator.onBreak(function(br) {
+    routes.onBreak(br, function(type, message) {
+      //namespace.emit.apply(namespace, arguments);
+      io.of("/" + namespace).emit(type, message);
+    });
+  });
 };
 
 server.listen(app.get('port'), function() {
