@@ -49,9 +49,6 @@ module.exports = {
             // Emit to everybody else
             socket.emit("message", message);
             socket.broadcast.emit("message", message);
-            
-            // Send back the server-set ID and time
-            //fn({id: message.id, time: message.time, content: message.content});
         });        
     },
     

@@ -1,9 +1,11 @@
+var DebugConnect = require('../lib/connector');
 var program = require("commander");
 
 program
     .version('0.0.1')
-    .option('-a, --attach <dest>', 'Attach to an existing process at [dest] (host:port)')
-    .option('-p, --port <port>', 'Port to run debugger on (5858)', 5858)
+    .option('--attach <dest>', 'Attach to an existing process at <dest> (host:port)')
+    .option('--port <port>', 'Port to run debugger on (5858)', 5858)
+    .option('--pid <pid>', 'Attach to an existing process on <pid>')
     
 var spawnChild = function(path, port, brk) {
     var spawn = require('child_process').spawn;
@@ -29,11 +31,12 @@ var spawnChild = function(path, port, brk) {
     return process.pid;
 };
 
-var attachToChild = function(host, port, pid) {
-    var DebugConnect = require('../lib/connector');
-    
-    console.log(pid, port);
-    
+var attachToPid = function(host, port, pid) {
+    process._debugProcess(pid);
+    var connector = new DebugConnect("foo", '127.0.0.1', 8888, pid, port);
+}
+
+var attachToChild = function(host, port, pid) {    
     var connector = new DebugConnect("foo", '127.0.0.1', 8888, pid, port);
 };
     
@@ -52,15 +55,20 @@ var doLocal = function(cmd, config) {
         return;
     }
     
-    var pid = null;
-    var attach = options.attach;
+    var breakChild = !!options.pid;
+    var pid = options.pid;
+    var attach = options.attach; 
     
-    if (!attach) {
+    if (!attach && !pid) {
         var port = options.port;
         var brk = options.brk;
         
         pid = spawnChild(cmd, port, brk);
         attach = "localhost:" + port;
+    }
+    
+    if (!attach) {
+        attach = "localhost:5858";
     }
     
     var host = attach.slice(0, attach.indexOf(":"));
@@ -73,7 +81,14 @@ var doLocal = function(cmd, config) {
     
     port = parseInt(port);
     
-    attachToChild(host, port, pid);
+    if (!breakChild) {
+        // no --pid
+        attachToChild(host, port, pid);
+    }
+    else {
+        // --pid
+        attachToPid(host, port, pid);
+    }
 };
     
 program

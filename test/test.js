@@ -1,3 +1,5 @@
+console.log(process.pid);
+
 function test2(counter) {
     var d = {a: 1, b: 2, c: { d: 5, e: [1,2,3]}};
     
