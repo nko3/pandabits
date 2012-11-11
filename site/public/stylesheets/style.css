@@ -20,13 +20,27 @@ a {
 }
 
 .file-tabs .file-header {
-    position: absolute;
+    /*position: absolute;
     top: 0;
     left: 0;
     right: 0;
     background: whitesmoke;
-    z-index: 100;
+    z-index: 100;*/
     padding: 2px;
+    background-color: #FAFAFA;
+    background-image: -moz-linear-gradient(top, white, #F2F2F2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(#F2F2F2));
+    background-image: -webkit-linear-gradient(top, white, #F2F2F2);
+    background-image: -o-linear-gradient(top, white, #F2F2F2);
+    background-image: linear-gradient(to bottom, white, #F2F2F2);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    border-top: 1px solid #DDD;
+    border-left: 1px solid #DDD;
+    border-right: 1px solid #DDD;
     font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif
 }
 
@@ -44,10 +58,7 @@ a {
 .file-tabs .tab-content {
     height: 100%;
     border: 1px solid #DDD;
-}
-
-.file-tabs .tab-content .tab-pane {   
-    padding-top: 24px;
+    border-top: 0px;
 }
 
 .file-tabs pre {
@@ -85,6 +96,10 @@ a {
     line-height: 16px;
 }
 
+.file-table td {
+    padding-top: 9px;
+}
+
 .file-table td.linenos p {
     margin: 0px;
 }
@@ -104,16 +119,41 @@ a {
 
 .stream-window {
     height: 100%;
+}
+
+.stream-window .navbar {
+    margin-bottom: 0px;
     border: 1px solid #DDD;
+    border-bottom: 0px;
+}
+
+.stream-window .navbar-inner {
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border: 0px;
+    height: 24px;
+    min-height: 0px;
+    padding: 0px;
+}
+
+.stream-window .navbar-inner li a {
+    line-height: 5px;
+    font-size: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .messages-view {
     height: 100%;
     overflow-y: auto;
+    clear: both;
+    border: 1px solid #DDD;
+    border-top: 0px;
 }
 
 .stream-input {
-    margin-top: 10px;
+    margin-top: 7px;
 }
 
 .stream-input textarea {

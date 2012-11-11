@@ -732,16 +732,44 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         }
     });
     
+    var StreamToolbarView = app.StreamToolbarView = Backbone.View.extend({
+        className: "navbar",
+        tagName: "div",
+        
+        initialize: function() {            
+        },
+        
+        render: function() {
+            this.$el.html(_.template(StreamToolbarView.template));
+                      
+            return this;
+        },
+    },{
+        template: ' \
+<div class="navbar-inner"> \
+    <ul class="nav"> \
+        <li class=""><a href="#" title="continue"><i class="icon-play"></i></a></li> \
+        <li class=""><a href="#" title="pause"><i class="icon-pause"></i></a></li> \
+        <li class=""><a href="#" title="step in"><i class="icon-chevron-down"></i></a></li> \
+        <li class=""><a href="#" title="step out"><i class="icon-chevron-up"></i></a></li> \
+        <li class=""><a href="#" title="step into"><i class="icon-chevron-right"></i></a></li> \
+    </ul> \
+</div> \
+'
+    });
+    
     var StreamView = app.StreamView = Backbone.View.extend({
         className: "stream-window",
         
         initialize: function(options) {
             
+            this.toolbarView = new StreamToolbarView();
             this.messagesView = new StreamMessagesView({collection: options.messages});
             this.inputView = new StreamInputView({messages: options.messages});
         },
         
         render: function() {
+            this.$el.append(this.toolbarView.render().el);
             this.$el.append(this.messagesView.render().el);
             this.$el.append(this.inputView.render().el);
             
