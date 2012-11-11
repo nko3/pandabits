@@ -16,21 +16,21 @@ JSONFormatter = (function() {
       $.each(json2, function(k3, v3) {
         // object of objects
         if(typeof v3 == 'object') {
-          $('#' + settings.list_id + ' #' + ulId).append('<li><span>{</span> <ul id="' + ulId + '-' + k3 + '"></ul></li>');
+          $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li><span>{</span> <ul id="' + ulId + '-' + k3 + '"></ul></li>');
           $.each(v3, function(k4, v4) {
             if(typeof v4 == 'object' && v4 != null) {
-              $('#' + settings.list_id + ' #' + ulId + '-' + k3).append('<li>' + k4 + ' <span>{</span> <ul id="'+k4+'-'+loopCount+'"></ul></li>');
+              $('#' + settings.list_id + ' #' + ulId + '-' + k3, settings.appendTo).append('<li>' + k4 + ' <span>{</span> <ul id="'+k4+'-'+loopCount+'"></ul></li>');
               loopAgain(v4, k4, k4 + '-' + loopCount);
             }
             else {
-              $('#' + settings.list_id + ' #' + ulId + '-' + k3).append('<li>' + k4 + ': ' + v4 + '</li>');
+              $('#' + settings.list_id + ' #' + ulId + '-' + k3, settings.appendTo).append('<li>' + k4 + ': ' + v4 + '</li>');
             }
 
           });
         } 
         else {
           // normal array
-          $('#' + settings.list_id + ' #' + ulId).append('<li>' + v3 + '</li>')
+          $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li>' + v3 + '</li>')
         }
       });
     },
@@ -43,16 +43,16 @@ JSONFormatter = (function() {
         if(nextVal != null && typeof nextVal == 'object') {
           if(nextVal.length == 0) {
             // an empty object, just output that
-            $('#' + settings.list_id + ' #' + ulId).append('<li><i>' + nextKey + ':</i> []</li>');
+            $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li><i>' + nextKey + ':</i> []</li>');
           } 
           else if(nextVal.length >= 1) {
             // an object of objects
-            $('#' + settings.list_id + ' #' + ulId).append('<li><b>' + nextKey + ':</b> <span>[</span> ' + newList + '</li>');
+            $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li><b>' + nextKey + ':</b> <span>[</span> ' + newList + '</li>');
             loopObjectOfObjects(nextVal, nextListId);
           }
           else if(nextVal.length == undefined) {
             // next node
-            $('#' + settings.list_id + ' #' + ulId).append('<li><b>' + nextKey + ':</b> <span>{</span> ' + newList + '</li>');
+            $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li><b>' + nextKey + ':</b> <span>{</span> ' + newList + '</li>');
             loopAgain(nextVal, nextKey, nextListId);
           }        
         }
@@ -63,7 +63,7 @@ JSONFormatter = (function() {
           //   
           // }
           // else {
-            $('#' + settings.list_id + ' #' + ulId).append('<li><i>'+ nextKey + ':</i> ' + nextVal + '</li>');
+            $('#' + settings.list_id + ' #' + ulId, settings.appendTo).append('<li><i>'+ nextKey + ':</i> ' + nextVal + '</li>');
             
           // }
         }
@@ -71,7 +71,7 @@ JSONFormatter = (function() {
     },
     
     addClosingBraces = function() {
-      $('#' + settings.list_id + ' span').each(function() {
+      $('#' + settings.list_id + ' span', settings.appendTo).each(function() {
         var closingBrace = '<span>}</span>';
         if($(this).text() == "[") {
           closingBrace = '<span>]</span>';
@@ -85,16 +85,12 @@ JSONFormatter = (function() {
 
     $(settings.appendTo).append(jsonList);
 
-    $.each(json, function(key, val) {
-      
-      
-      
+    $.each(json, function(key, val) {    
       if(val != null && typeof val == 'object') {
         var goObj = false;
         var goArray = false;
         var nk = '';
         $.each(val, function(nextKey, nextVal) {
-        
           if(nextVal != null && typeof nextVal == 'object') {
             if(nextVal.length == undefined) {
               goObj = true;
@@ -110,41 +106,41 @@ JSONFormatter = (function() {
           }
         });
 
-        if(goObj) {
-          $('#' + settings.list_id).append('<li><b>' + key + ':</b> <span>[</span><ul id="' + nk + '-' + loopCount + '"></ul></li>');
-          loopObjectOfObjects(val, nk + '-' + loopCount);
+        if(val.length === undefined) {
+          $('#' + settings.list_id, settings.appendTo).append('<li><b>' + key + ':</b> <span>{</span><ul id="' + nk + '-' + loopCount + '"></ul></li>');
+          loopAgain(val, nk, nk + '-' + loopCount);
         }
-        else if(goArray) {
-          $('#' + settings.list_id).append('<li><b>' + key + ':</b> <span>[</span><ul id="' + nk + '-' + loopCount + '"></ul></li>');
+        else if(val.length >= 0) {
+          $('#' + settings.list_id, settings.appendTo).append('<li><b>' + key + ':</b> <span>[</span><ul id="' + nk + '-' + loopCount + '"></ul></li>');
           loopAgain(val, nk, nk + '-' + loopCount);
         }
         else {
-          $('#' + settings.list_id).append('<li><b>' + key + ':</b> <span>{</span><ul id="' + key + '-' + loopCount + '"></ul></li>');
+          $('#' + settings.list_id, settings.appendTo).append('<li><b>' + key + ':</b> <span>{</span><ul id="' + key + '-' + loopCount + '"></ul></li>');
           loopAgain(val, key, key + '-' + loopCount);              
         }
         
       }
       else {
-        $('#' + settings.list_id).append('<li><i>' + key + ':</i> ' + val + '</li>');
+        $('#' + settings.list_id, settings.appendTo).append('<li><i>' + key + ':</i> ' + val + '</li>');
       }
     });
     
     addClosingBraces();
     
     if(settings.collapse) {
-      addToggles(settings.list_id);      
+      addToggles(settings.list_id, settings.appendTo);      
     }
     
   },
   
-  addToggles = function( listId ) {
-    $('#' + listId + " > li").find('ul').each(function() {
+  addToggles = function( listId, appendTo ) {
+    $('#' + listId + " > li", appendTo).find('ul').each(function() {
       $(this).parent().find('span').eq(0).after('<span class="toggle fake-link"> - </span>');
     });
 
-    $('#' + listId + ' .toggle').next().hide().end().text(' + ');
+    $('#' + listId + ' .toggle', appendTo).next().hide().end().text(' + ');
 
-    $('#' + listId + ' .toggle').live('click', function() {
+    $('#' + listId + ' .toggle', appendTo).live('click', function() {
       if($(this).next().is(":visible")) {
         $(this).next().hide().end().text(' + ');
       }

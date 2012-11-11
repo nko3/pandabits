@@ -93,8 +93,9 @@ var translator = null;
 setTimeout(function() {
   var DebugTranslator = require('../lib/translator');
   translator = new DebugTranslator(debuggee.pid, 5858);
-  
-  translator.cont();
+  translator.connect(function() {
+    translator.cont();
+  });
   
   
 }, 100);

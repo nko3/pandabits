@@ -16,6 +16,8 @@
             time: (new Date()).toString()
         }
         
+        fn = fn || function() {};
+        
         App.socket.emit("message", message, function(response) {
             App.handleMessage(response, true);
             fn(response);

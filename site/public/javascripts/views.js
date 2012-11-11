@@ -82,13 +82,14 @@
             var enabled = !!this.breakpoints[line];
             this.breakpoints[line] = !enabled;
             
+            var that = this;
             if (enabled) {
                 $(e.currentTarget).find("i").addClass("icon-blank");
                 $(e.currentTarget).find("i").removeClass("icon-exclamation-sign");
                 this.$("pre span[data-line=" + line + "]").removeClass("breakpointset");
                 
                 var command = "!rbp " + this.model.get("path") + ":" + line;
-                App.sendMessage(command, function() {});
+                App.sendMessage(command);
             }
             else {
                 $(e.currentTarget).find("i").removeClass("icon-blank");
@@ -96,7 +97,7 @@
                 this.$("pre span[data-line=" + line + "]").addClass("breakpointset");
                 
                 var command = "!sbp " + this.model.get("path") + ":" + line;
-                App.sendMessage(command, function() {});
+                App.sendMessage(command);
             }
         }
     },{
@@ -265,11 +266,9 @@
             }
             
             var message = null;
-            var rawMessage = App.sendMessage(text, function(revised) {
-                message.set({id: revised.id, time: revised.time, content: revised.content});
-            });
-            message = new App.Message(rawMessage);
-            this.messages.add(message);
+            var rawMessage = App.sendMessage(text);
+            //message = new App.Message(rawMessage);
+            //this.messages.add(message);
             
             this.$("textarea").val('');
             this.$("textarea").trigger("autosize");
@@ -366,7 +365,7 @@
                     var target = this.$(".evaluate-content");
                     JSONFormatter.format(this.content.data, {
                         appendTo: target,
-                        list_id: "json" + this.id,
+                        list_id: "jsonfoo" + this.id,
                         collapse: true
                     });
                 }
