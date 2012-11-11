@@ -24,7 +24,7 @@
         return message;
     },
     
-    window.App.handleMessage = function(message) {
+    window.App.handleMessage = function(message) {        
         if (!message.silent || !message.hasOwnProperty("silent")) {
             App.messages.add(message);
         }

@@ -33,6 +33,10 @@ module.exports = {
         var namespace = socket.namespace.name;
         var dispatch = dispatcher.dispatchers[namespace];
         
+        if (!dispatch) {
+            return;
+        }
+        
         var originalContent = message.content.data;        
         dispatch(message.content.data, function(err, type, response) {
             message.time = (new Date()).toString();
