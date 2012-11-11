@@ -55,7 +55,7 @@ var doLocal = function(cmd, config) {
         return;
     }
     
-    var breakChild = !!options.pid;
+    var pidAttach = !!options.pid;
     var pid = options.pid;
     var attach = options.attach; 
     
@@ -81,7 +81,7 @@ var doLocal = function(cmd, config) {
     
     port = parseInt(port);
     
-    if (!breakChild) {
+    if (!pidAttach) {
         // no --pid
         attachToChild(host, port, pid);
     }
