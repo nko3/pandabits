@@ -334,7 +334,7 @@
             this.$el.html(_.template(CommandContentView.template, {
                 original: this.content.original,
                 error: this.content.error,
-                data: this.content.data
+                data: _.isString(this.content.data) ? this.content.data : ""
             }));
             
             return this;
