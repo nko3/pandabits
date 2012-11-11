@@ -126,7 +126,7 @@ module.exports = {
         message.content = {};
         message.content.type = "system";
         message.content.error = null;
-        message.content.data = "Debugger is now attached.";
+        message.content.data = "Debugger has disconnected.";
         broadcast("message", message);
     }
 };

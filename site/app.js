@@ -53,8 +53,9 @@ var debugServer = net.createServer(function(c) {
     var d = dnode();
     d.on('remote', function (remote) {
         translator = remote;
-        translator.namespace(function(err, namespace) {          
+        translator.namespace(function(err, namespace) {    
           namespace = "/" + namespace;
+          c.debugNamespace = namespace;
           dispatcher.createDispatcher(namespace, translator);
         
           translator.onBreak(function(br) {
@@ -94,7 +95,11 @@ var debugServer = net.createServer(function(c) {
         translator.connect(function() {console.log('Connected');});
     });
     c.on('close', function(has_error) {
-        console.log("Remote service disconnected");
+      if (c.debugNamespace && namespaces[c.debugNamespace]) {
+          routes.onDebuggerDisconnected(function(type, message) {
+            io.of(c.debugNamespace).emit(type, message);
+          });
+      }
     });
     c.pipe(d).pipe(c);
 });
