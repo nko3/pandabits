@@ -1,7 +1,6 @@
 #!/bin/bash
 while [ 1 ]; do
     echo Starting
-    node tool/demo.js &> /mnt/logs/demo-log
+    run-prod
     echo Died
 done
-
