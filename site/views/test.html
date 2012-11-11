@@ -9,7 +9,6 @@
 
     <!-- Le styles -->
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/gridster/jquery.gridster.css" rel="stylesheet">
     <link href="/stylesheets/font-awesome.css" rel="stylesheet">
     <link href="/stylesheets/jsonformatter.css" rel="stylesheet">
@@ -42,17 +41,14 @@
 
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
-        <div class="container">
+        <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">nodbg</a>
+          <a class="brand" href="#">nodbg&gt;</a>
           <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-            </ul>
             <div class="navbar-form pull-right user-form">
               <input class="span2" type="text" value="User {{user}}"></input>
               <a class="edit-pencil" href="#"><i class="icon-pencil"></i></a>
@@ -62,12 +58,12 @@
       </div>
     </div>
 
-      <div class="gridster">
-        <ul>
-            <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" id="files"></li>
-            <li data-row="1" data-col="2" data-sizex="1" data-sizey="1" id="stream"></li>
-        </ul>
-      </div>
+    <div class="gridster">
+      <ul>
+          <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" id="files"></li>
+          <li data-row="1" data-col="2" data-sizex="1" data-sizey="1" id="stream"></li>
+      </ul>
+    </div>
     
 
     <!-- Le javascript

@@ -56,6 +56,8 @@
                     }
                 }
                 
+                $(window).resize();
+                
                 break;
             }
             case "setbreakpoint": {
@@ -85,6 +87,7 @@
                 break;
             }
             case "go": {
+                App.isPaused = false;
                 if (App.highlight) {
                     var file = App.files.get(App.highlight.script);
                     if (file) {
@@ -104,6 +107,7 @@
                 var br = message.content.data.data;
                 
                 App.currentFrame = br.frame || 0;
+                App.isPaused = true;
                 
                 if (App.highlight) {
                     var prevFile = App.files.get(App.highlight.script);

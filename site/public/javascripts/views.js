@@ -186,6 +186,8 @@
             this.$("ul.nav").scrollLeft(
                 currentOffset + $target.parent().offset().left
             );
+            
+            this.$(".file-header").text(file.get("path"));
         },
         
         onFileAdded: function(file) {
@@ -233,10 +235,11 @@
         },
         
         addFileTab: function(file, view) {
+            var path = file.get("path") || "";
             var template = '<li><a href="#file-tab-content<%= id %>" data-file="<%= path %>" data-toggle="tab"><%= path %></a></li>';
             this.$("ul.nav").append($(_.template(template, {
                 id: file.cid,
-                path: file.get("path")
+                path: path.slice(path.lastIndexOf("/") + 1)
             })));
             
             this.$(".tab-content").append(view.render().el);
@@ -263,6 +266,7 @@
         }
     },{
         template: ' \
+<div class="file-header"></div> \
 <div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \
@@ -711,9 +715,9 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         addMessage: function(message, view) {
             var scrollTop = this.$el.scrollTop();
             var scrollHeight = this.$el.prop('scrollHeight');
-            var offsetHeight = this.$el.prop('offsetHeight');
+            var outerHeight = this.$el.outerHeight()
             
-            var scrolledAllTheWayDown = (scrollTop === (scrollHeight - offsetHeight));
+            var scrolledAllTheWayDown = Math.abs(scrollHeight - scrollTop - outerHeight) < 20;
             
             this.$el.append(view.render().el);
             
@@ -728,16 +732,61 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         }
     });
     
+    var StreamToolbarView = app.StreamToolbarView = Backbone.View.extend({
+        className: "navbar",
+        tagName: "div",
+        
+        initialize: function() {            
+        },
+        
+        render: function() {
+            this.$el.html(_.template(StreamToolbarView.template));
+                      
+            return this;
+        },
+        
+        events: {
+            "click li a": "onToolbarActionClicked"
+        },
+        
+        onToolbarActionClicked: function(e) {
+            var control = $(e.currentTarget).data("control");
+            
+            if (control !== "pause" && App.isPaused) {
+                App.sendMessage("!" + control);
+            }
+            else if (control === "pause" && !App.isPaused) {
+                App.sendMessage("!" + control);
+            }
+        }
+    },{
+        template: ' \
+<div class="navbar-inner"> \
+    <ul class="nav"> \
+        <li class=""><a href="#" data-control="go" title="continue"><i class="icon-play"></i></a></li> \
+        <li class=""><a href="#" data-control="pause" title="pause"><i class="icon-pause"></i></a></li> \
+        <li class=""><a href="#" data-control="stepin" title="step in"><i class="icon-chevron-down"></i></a></li> \
+        <li class=""><a href="#" data-control="stepout" title="step out"><i class="icon-chevron-up"></i></a></li> \
+        <li class=""><a href="#" data-control="stepover" title="step over"><i class="icon-chevron-right"></i></a></li> \
+        <li class=""><a href="#" data-control="backtrace" title="backtrace"><i class="icon-th-list"></i></a></li> \
+        <li class=""><a href="#" data-control="bps" title="breakpoints"><i class="icon-exclamation-sign"></i></a></li> \
+    </ul> \
+</div> \
+'
+    });
+    
     var StreamView = app.StreamView = Backbone.View.extend({
         className: "stream-window",
         
         initialize: function(options) {
             
+            this.toolbarView = new StreamToolbarView();
             this.messagesView = new StreamMessagesView({collection: options.messages});
             this.inputView = new StreamInputView({messages: options.messages});
         },
         
         render: function() {
+            this.$el.append(this.toolbarView.render().el);
             this.$el.append(this.messagesView.render().el);
             this.$el.append(this.inputView.render().el);
             
