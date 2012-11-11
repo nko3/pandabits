@@ -715,9 +715,9 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         addMessage: function(message, view) {
             var scrollTop = this.$el.scrollTop();
             var scrollHeight = this.$el.prop('scrollHeight');
-            var offsetHeight = this.$el.prop('offsetHeight');
+            var outerHeight = this.$el.outerHeight()
             
-            var scrolledAllTheWayDown = Math.abs(scrollTop - (scrollHeight - offsetHeight)) < 5;
+            var scrolledAllTheWayDown = Math.abs(scrollHeight - scrollTop - outerHeight) < 20;
             
             this.$el.append(view.render().el);
             
@@ -768,6 +768,8 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         <li class=""><a href="#" data-control="stepin" title="step in"><i class="icon-chevron-down"></i></a></li> \
         <li class=""><a href="#" data-control="stepout" title="step out"><i class="icon-chevron-up"></i></a></li> \
         <li class=""><a href="#" data-control="stepover" title="step over"><i class="icon-chevron-right"></i></a></li> \
+        <li class=""><a href="#" data-control="backtrace" title="backtrace"><i class="icon-th-list"></i></a></li> \
+        <li class=""><a href="#" data-control="bps" title="breakpoints"><i class="icon-exclamation-sign"></i></a></li> \
     </ul> \
 </div> \
 '
