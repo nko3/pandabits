@@ -376,7 +376,8 @@
         render: function() {            
             this.$el.html(_.template(CommandContentView.template, {
                 original: this.content.original,
-                error: this.content.error
+                error: this.content.error,
+                data: this.content.data
             }));
             
             return this;
@@ -388,6 +389,8 @@
 </div> \
 <% if(error) { %> \
     <%= error %> \
+<% } else if (data) { %> \
+    <%= data %> \
 <% } %> \
 '
     });
@@ -645,6 +648,9 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         "frame": FrameCommandContentView,
         "break": BreakCommandContentView,
         "help": HelpContentView,
+        "stepin": CommandContentView,
+        "stepover": CommandContentView,
+        "stepout": CommandContentView,
         "command": CommandContentView
     };
     
@@ -774,13 +780,32 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         },
         
         onToolbarActionClicked: function(e) {
-            var control = $(e.currentTarget).data("control");
+            e.preventDefault();
+            e.stopPropagation();
             
-            if (control !== "pause" && App.isPaused) {
-                App.sendMessage("!" + control);
+            var control = $(e.currentTarget).data("control");
+            console.log("APP", App.isPaused, control);
+            
+            if (!App.isPaused) {
+                switch(control) {
+                    case "pause":
+                    case "backtrace":
+                    case "bps": {
+                        App.sendMessage("!" + control);
+                        break;
+                    }
+                }
             }
-            else if (control === "pause" && !App.isPaused) {
-                App.sendMessage("!" + control);
+            else {
+                switch(control) {
+                    case "go":
+                    case "stepin":
+                    case "stepout":
+                    case "stepover": {
+                        App.sendMessage("!" + control);
+                        break;
+                    }
+                }
             }
         }
     },{
@@ -806,7 +831,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             
             this.toolbarView = new StreamToolbarView();
             this.messagesView = new StreamMessagesView({collection: options.messages});
-            this.inputView = new StreamInputView({messages: options.messages});
+            this.inputView = new StreamInputView({messages: options.messages, commands: options.commands});
         },
         
         render: function() {

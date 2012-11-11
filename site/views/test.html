@@ -131,23 +131,11 @@
         
         grid.disable();
         
-        var rawFiles = [
-          //{
-          //  id: "1",
-          //  path: "abc.js",
-          //  code: "console.log('hello world')"
-          //},
-          //{
-          //  id: "2",
-          //  path: "def.js",
-          //  code: "console.log('hello world goodbye')"
-          //},
-        ];
-        
-        var files = App.files = new App.Files(rawFiles);
+        var files = App.files = new App.Files();
         var filesView = new App.FilesView({collection: files});
         
         var breakpoints = App.breakpoints = new App.Breakpoints();
+        var commands = App.commands = new App.Commands();
         
         $("#files").append(filesView.render().el);
         

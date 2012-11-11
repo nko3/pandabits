@@ -86,7 +86,10 @@
                 }
                 break;
             }
-            case "go": {
+            case "stepin":
+            case "stepover":
+            case "stepout":
+            case "go": {                
                 App.isPaused = false;
                 if (App.highlight) {
                     var file = App.files.get(App.highlight.script);
