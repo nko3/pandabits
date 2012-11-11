@@ -9,8 +9,19 @@
         PAGE_UP: 33,
         SPACE_BAR: 32,
         TAB: 9,
-        ESCAPE: 27
+        ESCAPE: 27,
+        BREAK: 19
     };
+        
+    //$(window).on("keydown", function(e) {
+    //    console.log("BOO", e);
+    //    if (e.ctrlKey && e.keyCode === KEYCODES.BREAK) {
+    //        console.log("BREAK");
+    //        return false;
+    //    } 
+    //    
+    //    return true;
+    //});
     
     var UsernameView = app.UsernameView = Backbone.View.extend({
         initialize: function() {
@@ -273,60 +284,6 @@
   <li><a href="#file-tab-content<%= info.cid %>" data-file="<%= info.path %>" data-toggle="tab"><%= info.path %></a></li> \
 <% }) %> \
 </ul>  \
-'
-    });
-    
-    var StreamInputView = app.StreamInputView = Backbone.View.extend({
-        className: "stream-input",
-        
-        initialize: function(options) {
-            this.messages = options.messages;
-            this.counter = 10;
-        },
-        
-        render: function() {
-            this.$el.html(_.template(StreamInputView.template));
-            
-            this.$("textarea").autosize();
-            
-            return this;
-        },
-        
-        events: {
-            "click .submit-button": "onSubmitClicked",
-            "keydown textarea": "onKeyDown"
-        },
-            
-        onKeyDown: function(e) {
-            // If there is a shift press, just return true
-            if (e.shiftKey) { 
-                return true;
-            }
-            
-            if (e.keyCode === KEYCODES.ENTER) {
-                this.onSubmitClicked();
-                return false;
-            }
-        },
-        
-        onSubmitClicked: function(e) {
-            var text = this.$("textarea").val();
-            
-            if (!text.trim()) {
-                return;
-            }
-            
-            var message = null;
-            var rawMessage = App.sendMessage(text);
-            //message = new App.Message(rawMessage);
-            //this.messages.add(message);
-            
-            this.$("textarea").val('');
-            this.$("textarea").trigger("autosize");
-        }
-    },{
-        template: ' \
-<textarea class="debug-input"></textarea> \
 '
     });
     
@@ -772,11 +729,24 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         render: function() {
             this.$el.html(_.template(StreamToolbarView.template));
                       
+            this.popover = this.$(".help-sign a").popover({
+                placement: "bottom",
+                trigger: "click",
+                title: "keyboard shortcuts",
+                content: StreamToolbarView.shortcuts,
+                html: true,
+                offset: 50,
+            });
+            
+            this.popover.on("shown", function() {
+                console.log("SHOWN");
+            })
+                      
             return this;
         },
         
         events: {
-            "click li a": "onToolbarActionClicked"
+            "click li a[data-control]": "onToolbarActionClicked"
         },
         
         onToolbarActionClicked: function(e) {
@@ -809,6 +779,18 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             }
         }
     },{
+        shortcuts: '\
+<table> \
+    <tbody> \
+        <tr><td class="help-key">return</td><td>submit command</td></tr> \
+        <tr><td class="help-key">shift+return</td><td>insert new line</td></tr> \
+        <tr><td class="help-key">page up</td><td>go up in command history</td></tr> \
+        <tr><td class="help-key">page down</td><td>go down in command history</td></tr> \
+        <tr><td class="help-key">esc</td><td>clear command</td></tr> \
+        <tr><td class="help-key">ctrl+break</td><td>pause debugger</td></tr> \
+    </tbody> \
+</table> \
+',
         template: ' \
 <div class="navbar-inner"> \
     <ul class="nav"> \
@@ -820,7 +802,94 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         <li class=""><a href="#" data-control="backtrace" title="backtrace"><i class="icon-th-list"></i></a></li> \
         <li class=""><a href="#" data-control="bps" title="breakpoints"><i class="icon-exclamation-sign"></i></a></li> \
     </ul> \
+    <ul class="nav pull-right"> \
+        <li class="help-sign"><a href="#" title="keyboard shortcuts"><i class="icon-question-sign"></i></a></li> \
+    </ul> \
 </div> \
+'
+    });
+    
+    var StreamInputView = app.StreamInputView = Backbone.View.extend({
+        className: "stream-input",
+        
+        initialize: function(options) {
+            this.messages = options.messages;
+            this.commands = options.commands;
+            this.counter = 10;
+        },
+        
+        render: function() {
+            this.$el.html(_.template(StreamInputView.template));
+            
+            this.$("textarea").autosize();
+            
+            return this;
+        },
+        
+        events: {
+            "click .submit-button": "onSubmitClicked",
+            "keydown textarea": "onKeyDown"
+        },
+            
+        onKeyDown: function(e) {
+            // If there is a shift press, just return true
+            if (e.shiftKey) { 
+                return true;
+            }
+            
+            if (e.keyCode === KEYCODES.ENTER) {
+                this.onSubmitClicked();
+                return false;
+            }
+            else if (e.keyCode === KEYCODES.PAGE_UP) {
+                var cursor = this.commands.cursor = Math.max(0, this.commands.cursor - 1);
+                var command = this.commands.at(cursor)
+                
+                this.$("textarea").val(command.get("text"));
+                this.$("textarea").trigger("autosize");
+            }
+            else if (e.keyCode === KEYCODES.PAGE_DOWN) {
+                var cursor = this.commands.cursor = Math.min(this.commands.length, this.commands.cursor + 1);
+                var command = this.commands.at(cursor)
+                
+                this.$("textarea").val((command ? command.get("text") : '') || '');
+                this.$("textarea").trigger("autosize");
+            }
+            else if (e.keyCode === KEYCODES.ESCAPE) {
+                this.$("textarea").val('');
+                this.$("textarea").trigger("autosize");
+            }
+        },
+        
+        onSubmitClicked: function(e) {
+            var text = this.$("textarea").val();
+            
+            if (!text.trim()) {
+                return;
+            }
+            
+            var message = null;
+            App.sendMessage(text);
+            
+            var cursor = this.commands.cursor;
+            var command = this.commands.at(cursor);
+            if (!command || command.get("text") !== text) {
+                this.commands.add({
+                    text: text
+                });
+                this.commands.cursor = this.commands.length;
+            }
+            else {
+                this.commands.cursor = Math.min(this.commands.length, this.commands.cursor + 1);
+            }
+            
+            
+            this.$("textarea").val('');
+            this.$("textarea").trigger("autosize");
+        }
+    },{
+        template: ' \
+<textarea class="debug-input"></textarea> \
 '
     });
     
@@ -828,7 +897,6 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         className: "stream-window",
         
         initialize: function(options) {
-            
             this.toolbarView = new StreamToolbarView();
             this.messagesView = new StreamMessagesView({collection: options.messages});
             this.inputView = new StreamInputView({messages: options.messages, commands: options.commands});

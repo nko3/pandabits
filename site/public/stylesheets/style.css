@@ -279,3 +279,18 @@ a {
 
 .breakpoint-file {
 }
+
+.help-sign .popover {
+    left: -290px !important;
+    width: 320px;
+}
+
+.help-sign .popover .arrow {
+    position: absolute;
+    top: -10px;
+    left: 304px;
+}
+
+.help-sign td.help-key {
+    padding-right: 6px;
+}
