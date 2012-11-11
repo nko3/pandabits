@@ -8,7 +8,7 @@ program
 var spawnChild = function(path, port, brk) {
     var spawn = require('child_process').spawn;
     
-    debuggee = spawn('node', ['--debug=' + port, path]);
+    debuggee = spawn('node', ['--debug-brk=' + port, path]);
     debuggee.on("exit", function() {
         console.log("CHILD EXITED");
     })
