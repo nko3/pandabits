@@ -7,25 +7,26 @@ program
     .option('--attach <dest>', 'Attach to an existing process at <dest> (host:port)')
     .option('--port <port>', 'Port to run debugger on (5858)', 5858)
     .option('--pid <pid>', 'Attach to an existing process on <pid>')
+    .option('--serverport <port>', 'Port to start web server on', 3000)
+    .option('--debugport <port>', 'Port to start debug server on', 8888)
     
 var spawnChild = function(path, port, brk) {
     var spawn = require('child_process').spawn;
     
     debuggee = spawn('node', ['--debug-brk=' + port, path]);
     debuggee.on("exit", function() {
-        console.log("CHILD EXITED");
+        console.log("- debuggee exited!");
     })
     
     debuggee.stdout.on('data', function (data) {
-        console.log('stdout: ' + data);
+        process.stdout.write(data);
     });
     
     debuggee.stderr.on('data', function (data) {
-        console.log('stderr: ' + data);
+        process.stderr.write(data);
     });
     
     process.on("exit", function() {
-        console.log("EXITING");
         debuggee.kill();
     });
     
@@ -33,14 +34,16 @@ var spawnChild = function(path, port, brk) {
 };
 
 var spawnServer = function() {
-    console.log("dirname = ", __dirname);
+    process.env.PORT = program.serverport || 3000;
+    process.env.DEBUG_PORT = program.debugport || 8888;
+    
     var spawn = require('child_process').spawn;
     var server = spawn('node', [__dirname+'/../server.js']);
     process.on("exit", function() {
         server.kill();
     });
     server.on("exit", function() {
-        console.log("ERROR SERVER DIED");
+        console.log("ERROR: webserver died!");
     });
 }
 
@@ -111,8 +114,20 @@ var doRemote = function(cmd) {
             // --pid
             attachToPid("nodbg.com", info.debugport, port, pid, info.id);
         }
+
+        var params = {
+            name: info.id,
+            serverhost: "nodbg.com",
+            serverport: program.serverport,
+            debugserverport: info.debugport,
+            debugport: port,
+            debugpid: pid
+        }
         
-        console.log("Connect to http://nodbg.com/debug/" + info.id);
+        console.log("- nodbg params:", JSON.stringify(params));
+        console.log("- nodbg started!");
+        console.log("- Connect to http://nodbg.com/debug/" + info.id);
+        console.log();
     });
 };
 
@@ -150,7 +165,7 @@ var doLocal = function(cmd, config) {
         
         port = parseInt(port);
         
-        register("127.0.0.1:3000", function(err, info) {
+        register("127.0.0.1:" + program.serverport, function(err, info) {
             if (err) {
                 console.log("There was an error:", err);
                 return;
@@ -165,7 +180,19 @@ var doLocal = function(cmd, config) {
                 attachToPid("127.0.0.1", info.debugport, port, pid, info.id);
             }
             
-            console.log("Connect to http://localhost:3000/debug/" + info.id);
+            var params = {
+                name: info.id,
+                serverhost: "127.0.0.1",
+                serverport: program.serverport,
+                debugserverport: info.debugport,
+                debugport: port,
+                debugpid: pid
+            }
+            
+            console.log("- nodbg params:", JSON.stringify(params));
+            console.log("- nodbg started!");
+            console.log("- Connect to http://localhost:" + program.serverport + "/debug/" + info.id);
+            console.log();
         });
     }, 500);
 };
@@ -185,4 +212,22 @@ program
     .description('debug and connect to nodbg.com')
     .action(doRemote);
     
+program
+    .command('help')
+    .description("display help")
+    .action(function() {
+        program.help();
+    });
+    
+program
+    .command('*')
+    .action(function() {
+        console.log("  Unknown command:", program.args[0]);
+        program.help();
+    });
+    
 program.parse(process.argv);
+
+if (program.args.length === 0) {
+    program.help();
+}
