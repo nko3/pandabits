@@ -93,7 +93,9 @@ var debugServer = net.createServer(function(c) {
 
         translator.connect(function() {console.log('Connected');});
     });
-    socket = c;
+    c.on('close', function(has_error) {
+        console.log("Remote service disconnected");
+    });
     c.pipe(d).pipe(c);
 });
 debugServer.listen(DEBUG_PORT);
