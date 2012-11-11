@@ -1,6 +1,6 @@
 #!/bin/bash
 while [ 1 ]; do
     echo Starting
-    run-prod
+    ./run-prod
     echo Died
 done
