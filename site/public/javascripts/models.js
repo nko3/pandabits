@@ -16,6 +16,14 @@
         model: Breakpoint 
     });
     
+    var Command = app.Command = Backbone.Model.extend({
+        
+    });
+    
+    var Commands = app.Commands = Backbone.Collection.extend({
+        model: Command 
+    });
+    
     var Message = app.Message = Backbone.Model.extend({
         
     });
