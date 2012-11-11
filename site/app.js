@@ -62,12 +62,18 @@ var listenOnNamespace = function(namespace) {
       socket.on(routeName, route);
     });
     
-    if (translator.lastBreak && translator.broken) {
-      translator.lastBreak.data.frame = translator.frame;
-      routes.onBreak(translator.lastBreak, function(type, message) {
+    translator.lastBreak(function(lastBreak) {
+        translator.broken(function(broken) {
+    if (lastBreak && broken) {
+       translator.frame(function(frame) {
+      lastBreak.data.frame = frame;
+      routes.onBreak(lastBreak, function(type, message) {
         socket.emit(type, message);
       });
+      });
     }
+    });
+    });
   });
   
   dispatcher.createDispatcher("/" + namespace, translator);
@@ -102,11 +108,27 @@ process.on("exit", function() {
 });
 
 var translator = null;
+var connector = null;
+var socket = null;
+var d = null;
+var net = require('net');
+var dnode = require('dnode');
 setTimeout(function() {
-  var DebugTranslator = require('../lib/translator');
-  translator = new DebugTranslator(debuggee.pid, 5858);
-  translator.connect(function() {
-    translator.cont();
+  var DebugConnect = require('../lib/connector');
+  var server = net.createServer(function(c) {
+      var d = dnode();
+      d.on('remote', function (remote) {
+          translator = remote;
+      });
+      socket = c;
+      c.pipe(d).pipe(c);
+  });
+    server.listen(8888, function() {
+    // = new DebugTranslator(debuggee.pid, 5858);
+    connector = new DebugConnect('127.0.0.1', 8888, debuggee.pid, 5858);
+    //connector.connect(function() {
+    //    connector.cont();
+    //});
   });
   
   
