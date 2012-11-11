@@ -21,7 +21,11 @@
     });
     
     var Commands = app.Commands = Backbone.Collection.extend({
-        model: Command 
+        model: Command,
+        
+        initialize: function() {
+            this.cursor = 0;
+        }
     });
     
     var Message = app.Message = Backbone.Model.extend({

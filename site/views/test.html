@@ -140,12 +140,12 @@
         $("#files").append(filesView.render().el);
         
         var messages = App.messages = new App.Messages();
-        var streamView = new App.StreamView({messages: messages});
+        var streamView = new App.StreamView({messages: messages, commands: commands});
         
         $("#stream").append(streamView.render().el);
         
         var usernameView = new App.UsernameView({model: App.currentUser, el: $(".user-form")});
-        
+                
         App.socket.on("message", App.handleMessage);
       });
     </script>
