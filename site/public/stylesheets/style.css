@@ -15,6 +15,10 @@ a {
     /*background: teal;*/
 }
 
+.user-form {
+    margin-top: 3px;
+}
+
 .file-tabs {
     height: 100%;
 }

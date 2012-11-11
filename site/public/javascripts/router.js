@@ -56,6 +56,8 @@
                     }
                 }
                 
+                $(window).resize();
+                
                 break;
             }
             case "setbreakpoint": {
