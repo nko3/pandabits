@@ -77,7 +77,7 @@ module.exports = {
         broadcast("message", message);
     },
     
-    "onStdErr": function(str, broadcast) {
+    "onStderr": function(str, broadcast) {
         message = {};
         message.time = (new Date()).toString();
         message.id = messageId++;
