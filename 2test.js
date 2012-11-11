@@ -48,7 +48,7 @@ var printTrace = function() {
     
     //thing 1
     translator
-      .setBreakpoint('/Volumes/code/code/pandabits/test/test.js', 5, function(err, resp) {
+      .setBreakpoint('/Volumes/code/code/pandabits/test/test.js', 4, function(err, resp) {
         console.log("BP1", err, resp);
       })
     
@@ -58,12 +58,14 @@ var printTrace = function() {
         //printTrace();
         console.log(translator.broken, translator.linenum, translator.script, translator.frame, translator.maxFrames);
         if (counter == 1) {
+             translator.fixStdout(function(err, resp) {console.log("stdout ", err, resp);});
              translator.cont();
         }
         else {
             translator.setFrame(translator.frame + 1, function(err, data) {
                 console.log("SetFrame ", err, data);
             });
+            translator.cont();
         }
         console.log(translator.broken, translator.linenum, translator.script, translator.frame, translator.maxFrames);
           
@@ -90,5 +92,4 @@ var printTrace = function() {
   
   translator.connect(onConnect);
   //onConnect();
-    
 }, 1000); 
