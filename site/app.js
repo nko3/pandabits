@@ -85,10 +85,6 @@ var debugServer = net.createServer(function(c) {
             namespaces[namespace] = true;
           }
           
-          routes.onDebuggerConnected(function(type, message) {
-            io.of(namespace).emit(type, message);
-          });
-          
           translators[namespace] = translator;
         });
 

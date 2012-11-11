@@ -246,7 +246,7 @@
         
         addFileTab: function(file, view) {
             var path = file.get("path") || "";
-            var template = '<li><a href="#file-tab-content<%= id %>" data-file="<%= path %>" data-toggle="tab"><%= path %></a></li>';
+            var template = '<li><a href="#file-tab-content<%= id %>" data-id="<%= id %>" data-file="<%= path %>" data-toggle="tab"><%= path %></a></li>';
             this.$("ul.nav").append($(_.template(template, {
                 id: file.cid,
                 path: path.slice(path.lastIndexOf("/") + 1)
@@ -273,6 +273,17 @@
                 this.$(".nav li a").last().click();
                 //this.$(".tab-content div.tab-pane").first().addClass("active");
             }
+        },
+        
+        events: {
+            "shown a[data-toggle='tab']": "onTabShown"
+        },
+        
+        onTabShown: function(e) {
+            var fileCid = $(e.target).attr("data-id");
+            var file = this.collection.getByCid(fileCid);
+            
+            this.$(".file-header").text(file.get("path"));
         }
     },{
         template: ' \
@@ -280,7 +291,7 @@
 <div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \
-  <li><a href="#file-tab-content<%= info.cid %>" data-file="<%= info.path %>" data-toggle="tab"><%= info.path %></a></li> \
+  <li><a href="#file-tab-content<%= info.cid %>" data-file="<%= info.path %>" data-id="<%= info.cid%>" data-toggle="tab"><%= info.path %></a></li> \
 <% }) %> \
 </ul>  \
 '
