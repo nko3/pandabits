@@ -91,13 +91,16 @@
             var prevLine = this.model.previous("highlight");
             var line = this.model.get("highlight");
             
+            console.log(prevLine, line);
+            
             this.$("pre span[data-line=" + prevLine + "]").removeClass("currentline");
             
             if (this.model.has("highlight")) {
                 var highlightedLine = this.$("pre span[data-line=" + line + "]");
                 highlightedLine.addClass("currentline");
                 
-                this.$el.parent().scrollTop(highlightedLine.offset().top);
+                var currentOffset = this.$el.parent().scrollTop() || 0;
+                this.$el.parent().scrollTop(currentOffset + highlightedLine.offset().top);
             }
         },
         
@@ -514,6 +517,7 @@
         "listbreakpoints": ListBreakpointsContentView,
         "loadfile": CommandContentView,
         "break": CommandContentView,
+        "go": CommandContentView,
         "command": CommandContentView
     };
     

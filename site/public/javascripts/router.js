@@ -84,7 +84,17 @@
                 }
                 break;
             }
+            case "go": {
+                if (App.highlight) {
+                    var file = App.files.get(App.highlight.script);
+                    if (file) {
+                        file.unset("highlight");
+                    }
+                }
+                break;
+            }
             case "break": {
+                console.log("BREAK", message);
                 var br = message.content.data.data;
                 
                 if (App.highlight) {
@@ -103,8 +113,8 @@
                     };
                 }
                 else {
-                    file.set("highlight", br.sourceLine);
                     App.trigger("change:active", file);
+                    file.set("highlight", br.sourceLine);
                 }
                 
                 break;
