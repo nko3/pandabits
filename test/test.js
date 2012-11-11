@@ -3,7 +3,10 @@ function test2(counter) {
     
     var a = 1;
     console.log("Counter: ", counter);
-    console.error("ERRCounter: ", counter);
+    
+    if (counter % 10 === 0) {
+        console.error("ERROR: ", counter);
+    }
 }
 
 function test1(counter) {

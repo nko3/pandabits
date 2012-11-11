@@ -136,6 +136,17 @@
                 
                 break;
             }
+            case "stdout":
+            case "stderr": {
+                var lastMessage = App.messages.at(App.messages.length - 1);
+                if (lastMessage && lastMessage.get('content').type === message.content.type) {
+                    lastMessage.get('content').data += message.content.data;
+                    App.messages.trigger("change:output", lastMessage);
+                }
+                else {
+                    App.messages.add(message);
+                }
+            }
         }
     };
 })();

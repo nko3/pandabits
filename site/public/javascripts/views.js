@@ -324,6 +324,31 @@
 '
     });
     
+    var OutputContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.message = options.message;
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        updateContent: function(newContent) {
+            this.$("pre").text(newContent);
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(OutputContentView.template, {
+                type: this.content.type,
+                output: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<pre class="output-<%= type %>"><%= output %></pre> \
+'
+    });
+    
     var CommandContentView = Backbone.View.extend({
         initialize: function(options) {
             this.id = options.message.cid;
@@ -608,6 +633,8 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         "stepin": CommandContentView,
         "stepover": CommandContentView,
         "stepout": CommandContentView,
+        "stdout": OutputContentView,
+        "stderr": OutputContentView,
         "command": CommandContentView
     };
     
@@ -630,6 +657,12 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             }
             
             return this;
+        },
+        
+        updateContent: function(content) {
+            if (this.contentView) {
+                this.contentView.updateContent(content);
+            }  
         },
         
         updateTime: function() {
@@ -678,6 +711,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             });
                         
             this.collection.on("add", this.onMessageAdded, this);
+            this.collection.on("change:output", this.onContentChanged, this);
         },
         
         onMessageAdded: function(message) {            
@@ -685,6 +719,23 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             view.on("update", this.ensureScroll, this);
             
             this.addMessage(message, view);
+        },
+        
+        onContentChanged: function(message) {
+            var scrollTop = this.$el.scrollTop();
+            var scrollHeight = this.$el.prop('scrollHeight');
+            var outerHeight = this.$el.outerHeight()
+            
+            var scrolledAllTheWayDown = Math.abs(scrollHeight - scrollTop - outerHeight) < 20;
+            
+            var view = this.views[message.get("cid")];
+            
+            view.updateContent(message.get("content").data);
+            
+            var newScrollHeight = this.$el.prop('scrollHeight');
+            if (scrolledAllTheWayDown) {
+                this.$el.scrollTop(newScrollHeight);
+            }
         },
         
         render: function() {

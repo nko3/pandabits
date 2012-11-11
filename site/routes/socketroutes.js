@@ -69,9 +69,9 @@ module.exports = {
         message.time = (new Date()).toString();
         message.id = messageId++;
         message.user = "System - stdout";
-        message.silent = false;
+        message.silent = true;
         message.content = {};
-        message.content.type = "command";
+        message.content.type = "stdout";
         message.content.error = null;
         message.content.data = str;
         broadcast("message", message);
@@ -82,9 +82,9 @@ module.exports = {
         message.time = (new Date()).toString();
         message.id = messageId++;
         message.user = "System - stderr";
-        message.silent = false;
+        message.silent = true;
         message.content = {};
-        message.content.type = "command";
+        message.content.type = "stderr";
         message.content.error = null;
         message.content.data = str;
         broadcast("message", message);

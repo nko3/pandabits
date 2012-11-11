@@ -218,6 +218,10 @@ a {
     -moz-border-radius: 0px;
 }
 
+.message-box .message-content pre.output-stderr {
+    color: red;
+}
+
 .user-form input {
     text-align: right;
     background: transparent;
