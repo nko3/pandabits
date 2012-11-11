@@ -216,6 +216,13 @@ program
     
 program
     .command('*')
-    .action(doRemote);
+    .action(function() {
+        console.log("  Unknown command:", program.args[0]);
+        program.help();
+    });
     
 program.parse(process.argv);
+
+if (program.args.length === 0) {
+    program.help();
+}
