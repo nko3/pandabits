@@ -102,7 +102,7 @@ var debugServer = net.createServer(function(c) {
 });
 debugServer.listen(DEBUG_PORT);
 
-var ids = 0;
+var ids = 1;
 app.get('/register', function(req, res) {
   var namespace = req.query.namespace || "debug" + ids++;
   
@@ -133,6 +133,7 @@ app.get('/', function(req, res) {
 });
 
 var listenOnNamespace = function(namespace) {    
+  namespaces[namespace] = true;
   io.of(namespace).on('connection', function(socket) {    
     var translator = translators[namespace];    
     if (translator) {

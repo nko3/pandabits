@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var DebugConnect = require('../lib/connector');
 var program = require('commander');
 var request = require('request');
