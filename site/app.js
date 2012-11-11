@@ -104,12 +104,13 @@ debugServer.listen(DEBUG_PORT);
 
 var ids = 0;
 app.get('/register', function(req, res) {
-  var namespace = "debug" + ids++;
+  var namespace = req.query.namespace || "debug" + ids++;
   
   res.json({
     id: namespace,
     debugport: DEBUG_PORT
-  })
+  });
+  
 });
 
 var userCounter = 0;
