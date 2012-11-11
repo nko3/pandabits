@@ -100,7 +100,8 @@
                 highlightedLine.addClass("currentline");
                 
                 var currentOffset = this.$el.parent().scrollTop() || 0;
-                this.$el.parent().scrollTop(currentOffset + highlightedLine.offset().top);
+                
+                this.$el.parent().scrollTo(highlightedLine, { duration: 0, offsetTop: 100});
             }
         },
         

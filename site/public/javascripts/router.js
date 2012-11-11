@@ -85,11 +85,14 @@
                 break;
             }
             case "go": {
+                console.log("GO GO", App.highlight);
                 if (App.highlight) {
                     var file = App.files.get(App.highlight.script);
                     if (file) {
+                        console.log("unset", file.get("path"));
                         file.unset("highlight");
                     }
+                    App.highlight = null;
                 }
                 break;
             }
@@ -97,20 +100,24 @@
                 console.log("BREAK", message);
                 var br = message.content.data.data;
                 
+                console.log("BREAK2", App.highlight);
                 if (App.highlight) {
                     var prevFile = App.files.get(App.highlight.script);
+                    console.log("UNSETTING");
                     if (prevFile) {
                         prevFile.unset("highlight");
                     }
+                    App.highlight = null;
                 }
                 
+                App.highlight = {
+                    script: br.script.name,
+                    line: br.sourceLine
+                };
+                    
                 var file = App.files.get(br.script.name);
                 if (!file) {
                     App.sendMessage("!loadfile " + br.script.name, true);
-                    App.highlight = {
-                        script: br.script.name,
-                        line: br.sourceLine
-                    };
                 }
                 else {
                     App.trigger("change:active", file);
