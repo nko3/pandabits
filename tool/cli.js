@@ -1,14 +1,16 @@
 var DebugConnect = require('../lib/connector');
-var program = require("commander");
+var program = require('commander');
 var request = require('request');
+var open = require('open')
 
 program
     .version('0.0.1')
     .option('--attach <dest>', 'Attach to an existing process at <dest> (host:port)')
-    .option('--port <port>', 'Port to run debugger on (5858)', 5858)
+    .option('--port <port>', 'Port to run debugger on (default: 5858)', 5858)
     .option('--pid <pid>', 'Attach to an existing process on <pid>')
-    .option('--serverport <port>', 'Port to start web server on', 3000)
-    .option('--debugport <port>', 'Port to start debug server on', 8888)
+    .option('--serverport <port>', 'Port to start web server on (default: 3000)', 3000)
+    .option('--debugport <port>', 'Port to start debug server on (default: 8888)', 8888)
+    .option('--nobrowser', 'Don\'t open a browser automatically when connected')
     
 var spawnChild = function(path, port, brk) {
     var spawn = require('child_process').spawn;
@@ -32,6 +34,11 @@ var spawnChild = function(path, port, brk) {
     
     return process.pid;
 };
+var openBrowser = function(url) {    
+    if (!program.nobrowser) {
+        open(url);
+    }
+}
 
 var spawnServer = function() {
     process.env.PORT = program.serverport || 3000;
@@ -128,6 +135,8 @@ var doRemote = function(cmd) {
         console.log("- nodbg started!");
         console.log("- Connect to http://nodbg.com/debug/" + info.id);
         console.log();
+        
+        openBrowser("http://nodbg.com/debug/" + info.id);
     });
 };
 
@@ -193,6 +202,8 @@ var doLocal = function(cmd, config) {
             console.log("- nodbg started!");
             console.log("- Connect to http://localhost:" + program.serverport + "/debug/" + info.id);
             console.log();
+            
+            openBrowser("http://localhost:" + program.serverport + "/debug/" + info.id);
         });
     }, 500);
 };
