@@ -133,6 +133,7 @@ app.get('/', function(req, res) {
 });
 
 var listenOnNamespace = function(namespace) {    
+  namespaces[namespace] = true;
   io.of(namespace).on('connection', function(socket) {    
     var translator = translators[namespace];    
     if (translator) {
