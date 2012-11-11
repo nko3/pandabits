@@ -64,15 +64,15 @@ var listenOnNamespace = function(namespace) {
     
     translator.lastBreak(function(lastBreak) {
         translator.broken(function(broken) {
-    if (lastBreak && broken) {
-       translator.frame(function(frame) {
-      lastBreak.data.frame = frame;
-      routes.onBreak(lastBreak, function(type, message) {
-        socket.emit(type, message);
+          if (lastBreak && broken) {
+            translator.frame(function(frame) {
+              lastBreak.data.frame = frame;
+              routes.onBreak(lastBreak, function(type, message) {
+                socket.emit(type, message);
+              });
+            });
+          }
       });
-      });
-    }
-    });
     });
   });
   
