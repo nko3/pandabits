@@ -3394,5 +3394,20 @@
 
         return false;
     };
+    
+    fn.resize_widget_dimensions = function(options) {
+      if (options.widget_margins) {
+        this.options.widget_margins = options.widget_margins;
+      }
+      if (options.widget_base_dimensions) { 
+        this.options.widget_base_dimensions = options.widget_base_dimensions;
+      }
+      
+      this.generate_grid_and_stylesheet();
+      this.get_widgets_from_DOM();
+      this.set_dom_grid_height();
+
+      return false;
+    };
 
 }(jQuery, window, document));

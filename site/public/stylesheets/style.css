@@ -19,6 +19,10 @@ a {
     height: 100%;
 }
 
+.file-tabs ul.nav {
+    margin-top: 9px;
+}
+
 .file-tabs .tab-content {
     height: 100%;
     border: 1px solid #DDD;
