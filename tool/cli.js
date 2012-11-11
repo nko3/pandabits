@@ -32,6 +32,18 @@ var spawnChild = function(path, port, brk) {
     return process.pid;
 };
 
+var spawnServer = function() {
+    console.log("dirname = ", __dirname);
+    var spawn = require('child_process').spawn;
+    var server = spawn('node', [__dirname+'/../server.js']);
+    process.on("exit", function() {
+        server.kill();
+    });
+    server.on("exit", function() {
+        console.log("ERROR SERVER DIED");
+    });
+}
+
 var attachToPid = function(server, serverport, port, pid, id) {
     process._debugProcess(pid);
     var connector = new DebugConnect(id, server, serverport, pid, port);
@@ -110,50 +122,52 @@ var doLocal = function(cmd, config) {
         console.log("Must supply either a script to run or an attach destination");
         return;
     }
-    
-    var pidAttach = !!options.pid;
-    var pid = options.pid;
-    var attach = options.attach; 
-    
-    if (!attach && !pid) {
-        var port = options.port;
-        var brk = options.brk;
+    spawnServer();
+    setTimeout(function() { 
+        var pidAttach = !!options.pid;
+        var pid = options.pid;
+        var attach = options.attach; 
         
-        pid = spawnChild(cmd, port, brk);
-        attach = "localhost:" + port;
-    }
-    
-    if (!attach) {
-        attach = "localhost:5858";
-    }
-    
-    var host = attach.slice(0, attach.indexOf(":"));
-    var port = attach.slice(attach.indexOf(":") + 1);
-    
-    if (!host || !port) {
-        console.log("Must supply a valid attach destination:", attach);
-        return;
-    }
-    
-    port = parseInt(port);
-    
-    register("127.0.0.1:3000", function(err, info) {
-        if (err) {
-            console.log("There was an error:", err);
+        if (!attach && !pid) {
+            var port = options.port;
+            var brk = options.brk;
+            
+            pid = spawnChild(cmd, port, brk);
+            attach = "localhost:" + port;
+        }
+        
+        if (!attach) {
+            attach = "localhost:5858";
+        }
+        
+        var host = attach.slice(0, attach.indexOf(":"));
+        var port = attach.slice(attach.indexOf(":") + 1);
+        
+        if (!host || !port) {
+            console.log("Must supply a valid attach destination:", attach);
             return;
         }
         
-        if (!pidAttach) {
-            // no --pid
-            attachToChild("127.0.0.1", info.debugport, port, pid, info.id);
-        }
-        else {
-            // --pid
-            attachToPid("127.0.0.1", info.debugport, port, pid, info.id);
-        }
+        port = parseInt(port);
         
-        console.log("Connect to http://localhost:3000/debug/" + info.id);
-    });
+        register("127.0.0.1:3000", function(err, info) {
+            if (err) {
+                console.log("There was an error:", err);
+                return;
+            }
+            
+            if (!pidAttach) {
+                // no --pid
+                attachToChild("127.0.0.1", info.debugport, port, pid, info.id);
+            }
+            else {
+                // --pid
+                attachToPid("127.0.0.1", info.debugport, port, pid, info.id);
+            }
+            
+            console.log("Connect to http://localhost:3000/debug/" + info.id);
+        });
+    }, 500);
 };
     
 program
