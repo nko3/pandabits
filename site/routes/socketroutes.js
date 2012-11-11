@@ -30,7 +30,8 @@ module.exports = {
     "message": function(message, fn) {
         var socket = this;
 
-        var dispatch = dispatcher.dispatchers[socket.namespace.name];
+        var namespace = socket.namespace.name;
+        var dispatch = dispatcher.dispatchers[namespace];
         
         var originalContent = message.content.data;        
         dispatch(message.content.data, function(err, type, response) {
@@ -42,10 +43,11 @@ module.exports = {
             message.content.original = originalContent;
             
             // Emit to everybody else
+            socket.emit("message", message);
             socket.broadcast.emit("message", message);
             
             // Send back the server-set ID and time
-            fn({id: message.id, time: message.time, content: message.content});
+            //fn({id: message.id, time: message.time, content: message.content});
         });        
     }
 };

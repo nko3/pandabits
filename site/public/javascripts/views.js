@@ -53,16 +53,99 @@
         tagName: "div",
         className: "tab-pane",
         
-        render: function() {
-            this.$el.html(_.template(FileView.template, this.model.toJSON()));
+        initialize: function() {
+            this.breakpoints = {};  
             
-            this.$el.attr("data-file", this.model.get("id"));
-            this.$el.attr("id", "file-tab-content" + this.model.get("id"));
+            App.breakpoints.on("add", this.onBreakpointAdded, this);
+            App.breakpoints.on("remove", this.onBreakpointRemoved, this);
+        },
+        
+        onBreakpointRemoved: function(breakpoint) {
+            console.log("REMOVING B")
+            if (breakpoint.get("script_name") !== this.model.get("path")) {
+                console.log("EXITING");
+                return;
+            }
+            
+            var line = breakpoint.get("line");
+            var $target = this.$("a[data-line=" + line + "] i");
+            
+            $target.addClass("icon-blank");
+            $target.removeClass("icon-exclamation-sign");
+            this.$("pre span[data-line=" + line + "]").removeClass("breakpointset");
+        },
+        
+        onBreakpointAdded: function(breakpoint) {
+            if (breakpoint.get("script_name") !== this.model.get("path")) {
+                return;
+            }
+            
+            var line = breakpoint.get("line");
+            var $target = this.$("a[data-line=" + line + "] i");
+            
+            $target.removeClass("icon-blank");
+            $target.addClass("icon-exclamation-sign");
+            this.$("pre span[data-line=" + line + "]").addClass("breakpointset");
+        },
+        
+        render: function() {
+            var model = this.model.toJSON();
+            model.lines = model.code.split("\n");
+            this.$el.html(_.template(FileView.template, model));
+            
+            this.$el.attr("data-file", this.model.get("path"));
+            this.$el.attr("id", "file-tab-content" + this.model.cid);
             
             return this;
         },
+        
+        events: {
+            "click .breakpoints p": "onBreakpointClicked",
+        },
+        
+        onBreakpointClicked: function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            var line = $(e.currentTarget).find("a").attr("data-line");
+            var enabled = !!this.breakpoints[line];
+            this.breakpoints[line] = !enabled;
+            
+            var that = this;
+            if (enabled) {
+                var command = "!rbp " + this.model.get("path") + ":" + line;
+                App.sendMessage(command);
+            }
+            else {
+                var command = "!sbp " + this.model.get("path") + ":" + line;
+                App.sendMessage(command);
+            }
+        }
     },{
-        template: "<pre><code><%= code %></code></pre>"
+        template: ' \
+<table class="file-table"> \
+    <tbody> \
+        <tr> \
+            <td class="linenos" valign="top"> \
+            <% for(var i = 0; i < lineCount; i++) { %> \
+                <p style="text-align: right;"><%= i+1 %></p> \
+            <% } %> \
+            <td class="linenos breakpoints" valign="top"> \
+            <% for(var i = 0; i < lineCount; i++) { %> \
+                <p style="text-align: right;"> \
+                    <a href="#" data-line="<%= i %>"> \
+                        <i class="icon-blank"></i> \
+                    </a> \
+                </p> \
+            <% } %> \
+            </td> \
+            <td valign="top"> \
+                <pre><% for(var i = 0; i < lines.length; i++) { %><span data-line="<%= i %>"><%= lines[i] %></span>\n<% } %></pre> \
+            </td> \
+        </tr> \
+    </tbody> \
+</table> \
+'        
     });
     
     var FilesView = app.FilesView = Backbone.View.extend({
@@ -124,9 +207,9 @@
         },
         
         addFileTab: function(file, view) {
-            var template = '<li><a href="#file-tab-content<%= id %>" data-file="<%= id %>" data-toggle="tab"><%= path %></a></li>';
+            var template = '<li><a href="#file-tab-content<%= id %>" data-file="<%= path %>" data-toggle="tab"><%= path %></a></li>';
             this.$("ul.nav").append($(_.template(template, {
-                id: file.get("id"),
+                id: file.cid,
                 path: file.get("path")
             })));
             
@@ -148,8 +231,8 @@
             var tabs = this.$(".nav li.active");
             
             if (tabs.length === 0) {
-                this.$(".nav li").first().addClass("active");
-                this.$(".tab-content div.tab-pane").first().addClass("active");
+                this.$(".nav li a").first().click();
+                //this.$(".tab-content div.tab-pane").first().addClass("active");
             }
         }
     },{
@@ -157,7 +240,7 @@
 <div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \
-  <li><a href="#file-tab-content<%= info.id %>" data-file="<%= info.id %>" data-toggle="tab"><%= info.path %></a></li> \
+  <li><a href="#file-tab-content<%= info.cid %>" data-file="<%= info.path %>" data-toggle="tab"><%= info.path %></a></li> \
 <% }) %> \
 </ul>  \
 '
@@ -204,11 +287,9 @@
             }
             
             var message = null;
-            var rawMessage = App.sendMessage(text, function(revised) {
-                message.set({id: revised.id, time: revised.time, content: revised.content});
-            });
-            message = new App.Message(rawMessage);
-            this.messages.add(message);
+            var rawMessage = App.sendMessage(text);
+            //message = new App.Message(rawMessage);
+            //this.messages.add(message);
             
             this.$("textarea").val('');
             this.$("textarea").trigger("autosize");
@@ -305,7 +386,7 @@
                     var target = this.$(".evaluate-content");
                     JSONFormatter.format(this.content.data, {
                         appendTo: target,
-                        list_id: "json" + this.id,
+                        list_id: "jsonfoo" + this.id,
                         collapse: true
                     });
                 }
@@ -409,8 +490,10 @@
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
         "message": MessageContentView,
-        "breakpoint": BreakpointCommandContentView,
+        "setbreakpoint": BreakpointCommandContentView,
+        "removebreakpoint": BreakpointCommandContentView,
         "listbreakpoints": ListBreakpointsContentView,
+        "loadfile": CommandContentView,
         "command": CommandContentView
     };
     
