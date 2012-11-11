@@ -376,6 +376,23 @@
 '
     });
     
+    var ChatContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(ChatContentView.template, {
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: '<%= data %>'
+    });
+    
     var BreakpointCommandContentView = Backbone.View.extend({
         initialize: function(options) {
             this.id = options.message.cid;
@@ -634,6 +651,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         "stepout": CommandContentView,
         "stdout": OutputContentView,
         "stderr": OutputContentView,
+        "chat": ChatContentView,
         "command": CommandContentView
     };
     

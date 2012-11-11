@@ -38,7 +38,6 @@ var attachToPid = function(server, serverport, port, pid, id) {
 }
 
 var attachToChild = function(server, serverport, port, pid, id) { 
-    console.log(arguments);   
     var connector = new DebugConnect(id, server, serverport, pid, port);
 };
     
