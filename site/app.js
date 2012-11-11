@@ -58,6 +58,13 @@ var debugServer = net.createServer(function(c) {
           c.debugNamespace = namespace;
           dispatcher.createDispatcher(namespace, translator);
         
+          if (!namespaces[namespace]) {
+            listenOnNamespace(namespace);
+            namespaces[namespace] = true;
+          }
+          
+          translators[namespace] = translator;
+        
           translator.onBreak(function(br) {
             routes.onBreak(br, function(type, message) {
               io.of(namespace).emit(type, message);
@@ -79,13 +86,6 @@ var debugServer = net.createServer(function(c) {
               console.log("DONE", arguments); 
             }
           );
-          
-          if (!namespaces[namespace]) {
-            listenOnNamespace(namespace);
-            namespaces[namespace] = true;
-          }
-          
-          translators[namespace] = translator;
         });
 
         translator.connect(function() {console.log('Connected');});
@@ -95,6 +95,7 @@ var debugServer = net.createServer(function(c) {
           routes.onDebuggerDisconnected(function(type, message) {
             io.of(c.debugNamespace).emit(type, message);
           });
+          delete translators[c.debugNamespace];
       }
     });
     c.pipe(d).pipe(c);
@@ -129,7 +130,7 @@ app.get('/test', function(req, res){
   res.render('test.html');
 });
 
-var listenOnNamespace = function(namespace) {  
+var listenOnNamespace = function(namespace) {    
   io.of(namespace).on('connection', function(socket) {    
     var translator = translators[namespace];    
     if (translator) {
@@ -153,12 +154,12 @@ var listenOnNamespace = function(namespace) {
     
     if (!translator) {
       routes.onNoDebuggerAttached(function(type, message) {
-        io.of(namespace).emit(type, message);
+        socket.emit(type, message);
       });
     }
     else {
       routes.onDebuggerConnected(function(type, message) {
-        io.of(namespace).emit(type, message);
+        socket.emit(type, message);
       });
     }
   });
