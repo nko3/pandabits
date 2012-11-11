@@ -207,4 +207,15 @@ program
     .description('debug and connect locally')
     .action(doLocal);
     
+program
+    .command('help')
+    .description("display help")
+    .action(function() {
+        program.help();
+    });
+    
+program
+    .command('*')
+    .action(doRemote);
+    
 program.parse(process.argv);
