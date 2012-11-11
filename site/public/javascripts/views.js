@@ -460,7 +460,7 @@
     <tbody> \
     <% _.each(data.frames, function(frame, idx) { %> \
         <tr> \
-            <td class="backtrace-index"><%= idx %></td> \
+            <td class="backtrace-index"><%= idx %><% print (App.currentFrame === idx ? "*" : "") %></td> \
             <td class="backtrace-file"><%= frame.script.name %>:<%= frame.line %></td> \
         </tr> \
     <% }) %> \
@@ -552,6 +552,55 @@
 '
     });
     
+    var FrameCommandContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(FrameCommandContentView.template, {
+                original: this.content.original,
+                error: this.content.error,
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } else { %> \
+    Frame \'<%= data.frame %>\' is now the current frame.\
+<% } %> \
+'
+    });
+    
+    var BreakCommandContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(BreakCommandContentView.template, {
+                original: this.content.original,
+                error: this.content.error,
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>). \
+'
+    });
+    
     var ContentViews = {
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
@@ -563,6 +612,8 @@
         "break": CommandContentView,
         "go": CommandContentView,
         "scripts": ScriptsCommandContentView,
+        "frame": FrameCommandContentView,
+        "break": BreakCommandContentView,
         "command": CommandContentView
     };
     

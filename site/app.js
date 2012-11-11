@@ -61,12 +61,18 @@ var listenOnNamespace = function(namespace) {
     _.each(routes, function(route, routeName) {
       socket.on(routeName, route);
     });
+    
+    if (translator.lastBreak && translator.broken) {
+      translator.lastBreak.data.frame = translator.frame;
+      routes.onBreak(translator.lastBreak, function(type, message) {
+        socket.emit(type, message);
+      });
+    }
   });
   
   dispatcher.createDispatcher("/" + namespace, translator);
   translator.onBreak(function(br) {
     routes.onBreak(br, function(type, message) {
-      //namespace.emit.apply(namespace, arguments);
       io.of("/" + namespace).emit(type, message);
     });
   });

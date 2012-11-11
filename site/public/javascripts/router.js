@@ -6,6 +6,8 @@
     window.App = new Router();
     window.App.Router = Router;
     
+    window.App.currentFrame = 0;
+    
     window.App.sendMessage = function(message, silent) {
         message = {
             user: App.currentUser.get("name"),
@@ -92,8 +94,16 @@
                 }
                 break;
             }
+            case "frame": {
+                if (!message.content.error) {
+                    App.currentFrame = (message.content.data || {}).frame;
+                }
+                break;
+            }
             case "break": {
                 var br = message.content.data.data;
+                
+                App.currentFrame = br.frame || 0;
                 
                 if (App.highlight) {
                     var prevFile = App.files.get(App.highlight.script);
