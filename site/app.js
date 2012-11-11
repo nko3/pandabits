@@ -119,6 +119,7 @@ setTimeout(function() {
       var d = dnode();
       d.on('remote', function (remote) {
           translator = remote;
+          translator.connect(function() {console.log('Connected');});
       });
       socket = c;
       c.pipe(d).pipe(c);
