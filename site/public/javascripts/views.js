@@ -39,7 +39,6 @@
             e.stopPropagation();
             e.preventDefault();
             
-            console.log(this.$input);
             this.$input.focus();
         },
         
@@ -90,8 +89,6 @@
         highlightLine: function() {
             var prevLine = this.model.previous("highlight");
             var line = this.model.get("highlight");
-            
-            console.log(prevLine, line);
             
             this.$("pre span[data-line=" + prevLine + "]").removeClass("currentline");
             

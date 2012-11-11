@@ -31,8 +31,6 @@
             return;
         }
         
-        console.log(message);
-        
         switch(message.content.type) {
             case "loadfile": {
                 var files = message.content.data;
@@ -85,11 +83,9 @@
                 break;
             }
             case "go": {
-                console.log("GO GO", App.highlight);
                 if (App.highlight) {
                     var file = App.files.get(App.highlight.script);
                     if (file) {
-                        console.log("unset", file.get("path"));
                         file.unset("highlight");
                     }
                     App.highlight = null;
@@ -97,13 +93,10 @@
                 break;
             }
             case "break": {
-                console.log("BREAK", message);
                 var br = message.content.data.data;
                 
-                console.log("BREAK2", App.highlight);
                 if (App.highlight) {
                     var prevFile = App.files.get(App.highlight.script);
-                    console.log("UNSETTING");
                     if (prevFile) {
                         prevFile.unset("highlight");
                     }
