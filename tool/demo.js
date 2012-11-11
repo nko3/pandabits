@@ -66,7 +66,7 @@ var doRemote = function(cmd) {
         attachToChild("nodbg.com", info.debugport, port, pid, info.id);
 
         var params = {
-            name: 'nkodemo',
+            name: info.id,
             serverhost: "nodbg.com",
             serverport: program.serverport,
             debugserverport: info.debugport,
