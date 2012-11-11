@@ -717,7 +717,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             var scrollHeight = this.$el.prop('scrollHeight');
             var offsetHeight = this.$el.prop('offsetHeight');
             
-            var scrolledAllTheWayDown = (scrollTop === (scrollHeight - offsetHeight));
+            var scrolledAllTheWayDown = Math.abs(scrollTop - (scrollHeight - offsetHeight)) < 5;
             
             this.$el.append(view.render().el);
             
