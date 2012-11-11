@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>nodbg - social debugging</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/gridster/jquery.gridster.css" rel="stylesheet">
+    <link href="/stylesheets/font-awesome.css" rel="stylesheet">
+    <link href="/stylesheets/jsonformatter.css" rel="stylesheet">
+    <link href="/stylesheets/style.css" rel="stylesheet">
+
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      
+      .gridster {
+        margin-left: -45px;
+      }
+    </style>
+    
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="/bootstrap/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/bootstrap/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/bootstrap/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="#"><img src="/images/logo_black.png"/></a>
+          <div class="nav-collapse collapse">
+            <iframe 
+              style="margin-top: 9px"
+              class="pull-left" src="http://nodeknockout.com/iframe/pandabits" 
+              frameborder=0 scrolling=no allowtransparency=true width="115" height="25">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="hero-unit">
+            <h1>debugging... with friends!</h1>
+            <p>
+              Stop emailing logs or have someone looking over your shoulder when
+              you hit a bug! With nodbg, you can share your debugger with 
+              friends, even outside your own network! No logins or accounts,
+              just start it up and go!
+            </p>
+          </div>
+        </span>
+        <div class="row-fluid">
+          <div class="span6">
+            <h2>Install and Run</h2>
+          </div>
+          <div class="span6">
+            <h2>Try Now!</h2>
+          </div><!--/span-->
+        </div><!--/row-->
+        <div class="row-fluid">
+          <div class="span6">
+            <h4>Install from npm</h4>
+            <pre class="prettyprint">&gt; <code>npm install -g nodbg</code></pre>
+            <h4>Run locally</h4>
+            <pre class="prettyprint">&gt; <code>nodbg local path/to/file_to_debug.js
+- nodbg params: {}
+- nodbg started!
+- Connect to http://localhost:3000/debug/debug0</code></pre>
+              <h4>Run with nodbg.com</h4>
+              <pre class="prettyprint">&gt; <code>nodbg path/to/file_to_debug.js
+- nodbg params: {}
+- nodbg started!
+- Connect to http://nodbg.com/debug/debug0</code></pre>
+          </div><!--/span-->
+          <div class="span6">
+            <p>You can try out nodbg.com without installing anything! We will launch
+              a test program for you that you can debug and share with friends!</p>
+            <p><a class="btn" href="#">Launch Demo Program &raquo;</a></p>
+          </div><!--/span-->
+        </div><!--/row-->
+      </div><!--/row-->
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster --> 
+    <script src="/javascripts/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/underscore.js"></script>
+
+    <script>
+      $(function() {
+      });
+    </script>
+
+  </body>
+</html>

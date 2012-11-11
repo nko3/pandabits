@@ -112,7 +112,7 @@ app.get('/register', function(req, res) {
   })
 });
 
-var userCounter = 20;
+var userCounter = 0;
 app.get('/debug/:id', function(req, res) {
   var id = req.params.id;
   
@@ -120,14 +120,15 @@ app.get('/debug/:id', function(req, res) {
     listenOnNamespace("/" + id);
   }
   
-  res.render('test.html', {
+  res.render('debug.html', {
     id: id,
     user: userCounter++
   });
 });
 
-app.get('/test', function(req, res){
-  res.render('test.html');
+app.get('/', function(req, res) {  
+  
+  res.render('index.html', {});
 });
 
 var listenOnNamespace = function(namespace) {    
