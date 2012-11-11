@@ -276,7 +276,7 @@
         }
     },{
         template: ' \
-<div class="file-header"></div> \
+<div class="file-header">No open files...</div> \
 <div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \
@@ -384,6 +384,23 @@
         
         render: function() {            
             this.$el.html(_.template(ChatContentView.template, {
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: '<%= data %>'
+    });
+    
+    var SystemMessageContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(SystemMessageContentView.template, {
                 data: this.content.data
             }));
             
@@ -652,6 +669,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         "stdout": OutputContentView,
         "stderr": OutputContentView,
         "chat": ChatContentView,
+        "system": SystemMessageContentView,
         "command": CommandContentView
     };
     

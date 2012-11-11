@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -10,6 +9,9 @@ var fs = require('fs');
 var _ = require('underscore');
 var socketio = require('socket.io');
 
+var dispatcher = require('../lib/dispatcher');
+var routes = require('./routes/socketroutes');
+
 var app = express();
 
 var server = http.createServer(app); 
@@ -17,8 +19,11 @@ var io = socketio.listen(server);
 
 io.set('log level', 1);
 
+var APP_PORT = process.env.PORT || 3000;
+var DEBUG_PORT = process.env.DEBUG_PORT || 8888;
+
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', APP_PORT);
   app.set('views', __dirname + '/views');
   app.set('view options', {
     layout: false
@@ -79,6 +84,10 @@ var debugServer = net.createServer(function(c) {
             namespaces[namespace] = true;
           }
           
+          routes.onDebuggerConnected(function(type, message) {
+            io.of(namespace).emit(type, message);
+          });
+          
           translators[namespace] = translator;
         });
 
@@ -87,7 +96,7 @@ var debugServer = net.createServer(function(c) {
     socket = c;
     c.pipe(d).pipe(c);
 });
-debugServer.listen(8888);
+debugServer.listen(DEBUG_PORT);
 
 var ids = 0;
 app.get('/register', function(req, res) {
@@ -95,7 +104,7 @@ app.get('/register', function(req, res) {
   
   res.json({
     id: namespace,
-    debugport: 8888
+    debugport: DEBUG_PORT
   })
 });
 
@@ -116,9 +125,6 @@ app.get('/debug/:id', function(req, res) {
 app.get('/test', function(req, res){
   res.render('test.html');
 });
-
-var dispatcher = require('../lib/dispatcher');
-var routes = require('./routes/socketroutes');
 
 var listenOnNamespace = function(namespace) {  
   io.of(namespace).on('connection', function(socket) {    
@@ -141,6 +147,17 @@ var listenOnNamespace = function(namespace) {
     _.each(routes, function(route, routeName) {
       socket.on(routeName, route);
     });
+    
+    if (!translator) {
+      routes.onNoDebuggerAttached(function(type, message) {
+        io.of(namespace).emit(type, message);
+      });
+    }
+    else {
+      routes.onDebuggerConnected(function(type, message) {
+        io.of(namespace).emit(type, message);
+      });
+    }
   });
 };
 

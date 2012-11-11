@@ -89,5 +89,44 @@ module.exports = {
         message.content.error = null;
         message.content.data = str;
         broadcast("message", message);
+    },
+    
+    "onNoDebuggerAttached": function(broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System";
+        message.silent = false;
+        message.content = {};
+        message.content.type = "system";
+        message.content.error = null;
+        message.content.data = "No debugger attached.";
+        broadcast("message", message);
+    },
+    
+    "onDebuggerConnected": function(broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System";
+        message.silent = false;
+        message.content = {};
+        message.content.type = "system";
+        message.content.error = null;
+        message.content.data = "Debugger is now attached.";
+        broadcast("message", message);
+    },
+    
+    "onDebuggerDisconnected": function(broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System";
+        message.silent = false;
+        message.content = {};
+        message.content.type = "system";
+        message.content.error = null;
+        message.content.data = "Debugger is now attached.";
+        broadcast("message", message);
     }
 };
