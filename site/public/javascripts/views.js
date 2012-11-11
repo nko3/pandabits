@@ -344,6 +344,29 @@
         }
     });
     
+    var HelpContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {            
+            this.$el.html(_.template(HelpContentView.template, {
+                original: this.content.original,
+                help: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<pre><%= help %></pre> \
+'
+    });
+    
     var CommandContentView = Backbone.View.extend({
         initialize: function(options) {
             this.id = options.message.cid;
@@ -621,6 +644,7 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
         "scripts": ScriptsCommandContentView,
         "frame": FrameCommandContentView,
         "break": BreakCommandContentView,
+        "help": HelpContentView,
         "command": CommandContentView
     };
     
