@@ -85,7 +85,7 @@ var doRemote = function(cmd) {
     
     port = parseInt(port);
     
-    register("nodbg.com:3000", function(err, info) {
+    register("nodbg.com", function(err, info) {
         if (err) {
             console.log("There was an error:", err);
             return;
@@ -100,7 +100,7 @@ var doRemote = function(cmd) {
             attachToPid("nodbg.com", info.debugport, port, pid, info.id);
         }
         
-        console.log("Connect to http://nodbg.com:3000/debug/" + info.id);
+        console.log("Connect to http://nodbg.com/debug/" + info.id);
     });
 };
 
