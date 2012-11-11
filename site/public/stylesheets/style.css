@@ -21,6 +21,7 @@ a {
 
 .file-tabs .tab-content {
     height: 100%;
+    border: 1px solid #DDD;
 }
 
 .file-tabs .tab-content .tab-pane {
@@ -28,7 +29,52 @@ a {
 }
 
 .file-tabs pre {
-    height: 90%;
+    height: 95%;
+    white-space: pre;
+    word-break: normal;
+    word-wrap: normal;
+    background-color: white;
+    border: 0px;
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    line-height: 16px;
+    margin: 0px;
+    padding: 0px;
+    font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif
+}
+.file-tabs pre span {
+    width: 100%;
+}
+
+.file-tabs pre span.breakpointset {
+    background-color: #FDD;
+}
+
+.file-table td.linenos {
+    margin: 0;
+    padding-right: 0.5em;
+    color: #999;
+    font-family: verdana, sans-serif;
+    font-size: 0.8em;
+    line-height: 16px;
+}
+
+.file-table td.linenos p {
+    margin: 0px;
+}
+.file-table td.breakpoints p {
+    height: 16px;
+}
+
+.file-table td.breakpoints a {
+    text-decoration: none;
+    color: red;
+    height: 17px;
+}
+
+.file-table td.breakpoints i {
+    height: 16px;
 }
 
 .stream-window {

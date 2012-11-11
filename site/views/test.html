@@ -108,42 +108,31 @@
         grid.disable();
         
         var rawFiles = [
-          {
-            id: "1",
-            path: "abc.js",
-            code: "console.log('hello world')"
-          },
-          {
-            id: "2",
-            path: "def.js",
-            code: "console.log('hello world goodbye')"
-          },
+          //{
+          //  id: "1",
+          //  path: "abc.js",
+          //  code: "console.log('hello world')"
+          //},
+          //{
+          //  id: "2",
+          //  path: "def.js",
+          //  code: "console.log('hello world goodbye')"
+          //},
         ];
         
-        var files = new App.Files(rawFiles);
+        var files = App.files = new App.Files(rawFiles);
         var filesView = new App.FilesView({collection: files});
         
         $("#files").append(filesView.render().el);
         
-        var messages = window.messages = new App.Messages();
+        var messages = App.messages = new App.Messages();
         var streamView = new App.StreamView({messages: messages});
         
         $("#stream").append(streamView.render().el);
         
         var usernameView = new App.UsernameView({model: App.currentUser, el: $(".user-form")});
         
-        App.socket.on("message", function(message) {          
-          /*if (message.user == "Console Output" && messages.length > 0) {
-            var lastMessage = messages.at(messages.length - 1);
-            if (lastMessage.get("user") === message.user) {
-              lastMessage.set("content", lastMessage.get("content") + message.content);
-              return;
-            }
-          }*/
-          
-          messages.add(message);
-        });
-        
+        App.socket.on("message", App.handleMessage);
       });
     </script>
 
