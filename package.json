@@ -1,6 +1,6 @@
 {
   "name": "nko3-pandabits",
-  "version": "0.0.2-2",
+  "version": "0.0.2-23",
   "description": "Pandabits",
   "main": "server.js",
   "scripts": {
@@ -16,11 +16,15 @@
     "socket.io": "0.9.11",
     "underscore": "1.4.2",
     "hbs": "1.0.9",
-    "dnode" : "1.0.2",
-    "amd-loader": "~0.0.4"
+    "dnode": "1.0.2",
+    "amd-loader": "0.0.4"
   },
   "engines": {
     "node": "0.8.x"
   },
-  "subdomain": "pandabits.nko3"
+  "subdomain": "pandabits.nko3",
+  "domains": [
+    "nodbg.com",
+    "www.nodbg.com"
+  ]
 }
