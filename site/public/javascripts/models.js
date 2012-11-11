@@ -8,6 +8,14 @@
         model: File 
     });
     
+    var Breakpoint = app.Breakpoint = Backbone.Model.extend({
+        
+    });
+    
+    var Breakpoints = app.Breakpoints = Backbone.Collection.extend({
+        model: Breakpoint 
+    });
+    
     var Message = app.Message = Backbone.Model.extend({
         
     });

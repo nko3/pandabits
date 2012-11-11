@@ -55,6 +55,37 @@
         
         initialize: function() {
             this.breakpoints = {};  
+            
+            App.breakpoints.on("add", this.onBreakpointAdded, this);
+            App.breakpoints.on("remove", this.onBreakpointRemoved, this);
+        },
+        
+        onBreakpointRemoved: function(breakpoint) {
+            console.log("REMOVING B")
+            if (breakpoint.get("script_name") !== this.model.get("path")) {
+                console.log("EXITING");
+                return;
+            }
+            
+            var line = breakpoint.get("line");
+            var $target = this.$("a[data-line=" + line + "] i");
+            
+            $target.addClass("icon-blank");
+            $target.removeClass("icon-exclamation-sign");
+            this.$("pre span[data-line=" + line + "]").removeClass("breakpointset");
+        },
+        
+        onBreakpointAdded: function(breakpoint) {
+            if (breakpoint.get("script_name") !== this.model.get("path")) {
+                return;
+            }
+            
+            var line = breakpoint.get("line");
+            var $target = this.$("a[data-line=" + line + "] i");
+            
+            $target.removeClass("icon-blank");
+            $target.addClass("icon-exclamation-sign");
+            this.$("pre span[data-line=" + line + "]").addClass("breakpointset");
         },
         
         render: function() {
@@ -64,8 +95,6 @@
             
             this.$el.attr("data-file", this.model.get("path"));
             this.$el.attr("id", "file-tab-content" + this.model.cid);
-            
-            console.log(this.model.toJSON());
             
             return this;
         },
@@ -84,18 +113,10 @@
             
             var that = this;
             if (enabled) {
-                $(e.currentTarget).find("i").addClass("icon-blank");
-                $(e.currentTarget).find("i").removeClass("icon-exclamation-sign");
-                this.$("pre span[data-line=" + line + "]").removeClass("breakpointset");
-                
                 var command = "!rbp " + this.model.get("path") + ":" + line;
                 App.sendMessage(command);
             }
             else {
-                $(e.currentTarget).find("i").removeClass("icon-blank");
-                $(e.currentTarget).find("i").addClass("icon-exclamation-sign");
-                this.$("pre span[data-line=" + line + "]").addClass("breakpointset");
-                
                 var command = "!sbp " + this.model.get("path") + ":" + line;
                 App.sendMessage(command);
             }
@@ -469,7 +490,8 @@
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
         "message": MessageContentView,
-        "breakpoint": BreakpointCommandContentView,
+        "setbreakpoint": BreakpointCommandContentView,
+        "removebreakpoint": BreakpointCommandContentView,
         "listbreakpoints": ListBreakpointsContentView,
         "loadfile": CommandContentView,
         "command": CommandContentView

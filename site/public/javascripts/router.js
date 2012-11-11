@@ -46,6 +46,36 @@
                 
                 App.files.add(files);
                 
+                App.breakpoints.each(function(breakpoint) {
+                    App.breakpoints.trigger("add", breakpoint, App.breakpoints); 
+                });
+                
+                break;
+            }
+            case "setbreakpoint": {
+                var breakpoint = message.content.data;
+                if (breakpoint) {
+                    breakpoint.id = breakpoint.breakpoint;
+                    App.breakpoints.add(breakpoint);
+                }
+                break;
+            }
+            case "removebreakpoint": {
+                var breakpoint = message.content.data;
+                if (breakpoint) {                    
+                    var model = App.breakpoints.get(breakpoint.breakpoint);
+                    App.breakpoints.remove(model);
+                }
+                break;
+            }
+            case "listbreakpoints": {
+                var breakpoints = message.content.data;
+                if (breakpoints) {
+                    _.each(breakpoints.breakpoints, function(breakpoint) {
+                        breakpoint.id = breakpoint.number;
+                        App.breakpoints.add(breakpoint);
+                    });
+                }
                 break;
             }
         }

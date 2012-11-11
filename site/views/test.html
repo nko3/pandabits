@@ -123,6 +123,8 @@
         var files = App.files = new App.Files(rawFiles);
         var filesView = new App.FilesView({collection: files});
         
+        var breakpoints = App.breakpoints = new App.Breakpoints();
+        
         $("#files").append(filesView.render().el);
         
         var messages = App.messages = new App.Messages();
