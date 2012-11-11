@@ -117,7 +117,7 @@ var doRemote = function(cmd) {
 
         var params = {
             name: info.id,
-            serverhost: "127.0.0.1",
+            serverhost: "nodbg.com",
             serverport: program.serverport,
             debugserverport: info.debugport,
             debugport: port,
