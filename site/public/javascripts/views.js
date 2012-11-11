@@ -462,7 +462,6 @@
         <tr> \
             <td class="backtrace-index"><%= idx %></td> \
             <td class="backtrace-file"><%= frame.script.name %>:<%= frame.line %></td> \
-            <!--<td class="backtrace-function"><% print(frame.func.inferredName || frame.func.name || "anonymous") %></td>--> \
         </tr> \
     <% }) %> \
     </tbody> \
@@ -512,6 +511,47 @@
 '
     });
     
+    var ScriptsCommandContentView = Backbone.View.extend({
+        initialize: function(options) {
+            this.id = options.message.cid;
+            this.content = options.message.get('content');
+        },
+        
+        render: function() {   
+            var error = this.content.error;
+            var data = this.content.data;
+            var scripts = data;
+            
+            this.$el.html(_.template(ScriptsCommandContentView.template, {
+                original: this.content.original,
+                error: error || (scripts.length === 0 ? "No scripts." : null),
+                data: this.content.data
+            }));
+            
+            return this;
+        }
+    },{
+        template: ' \
+<div> \
+    &gt;&gt;&nbsp<%= original %> \
+</div> \
+<% if(error) { %> \
+    <%= error %> \
+<% } else { %> \
+<table class="breakpoint-table command-resposne"> \
+    <tbody> \
+    <% _.each(data, function(script, idx) { %> \
+        <tr> \
+            <td class="breakpoint-index"><%= idx+1 %></td> \
+            <td class="breakpoint-file"><%= script.name %></td> \
+        </tr> \
+    <% }) %> \
+    </tbody> \
+</table> \
+<% } %> \
+'
+    });
+    
     var ContentViews = {
         "backtrace": BacktraceContentView,
         "evaluate": EvaluateContentView,
@@ -522,6 +562,7 @@
         "loadfile": CommandContentView,
         "break": CommandContentView,
         "go": CommandContentView,
+        "scripts": ScriptsCommandContentView,
         "command": CommandContentView
     };
     
