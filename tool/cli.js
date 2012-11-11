@@ -107,7 +107,7 @@ var doRemote = function(cmd) {
     
     port = parseInt(port);
     
-    register("nodbg.com", function(err, info) {
+    register("www.nodbg.com", function(err, info) {
         if (err) {
             console.log("There was an error:", err);
             return;
@@ -115,16 +115,16 @@ var doRemote = function(cmd) {
         
         if (!pidAttach) {
             // no --pid
-            attachToChild("nodbg.com", info.debugport, port, pid, info.id);
+            attachToChild("www.nodbg.com", info.debugport, port, pid, info.id);
         }
         else {
             // --pid
-            attachToPid("nodbg.com", info.debugport, port, pid, info.id);
+            attachToPid("www.nodbg.com", info.debugport, port, pid, info.id);
         }
 
         var params = {
             name: info.id,
-            serverhost: "nodbg.com",
+            serverhost: "www.nodbg.com",
             serverport: program.serverport,
             debugserverport: info.debugport,
             debugport: port,
@@ -133,10 +133,10 @@ var doRemote = function(cmd) {
         
         console.log("- nodbg params:", JSON.stringify(params));
         console.log("- nodbg started!");
-        console.log("- Connect to http://nodbg.com/debug/" + info.id);
+        console.log("- Connect to http://www.nodbg.com/debug/" + info.id);
         console.log();
         
-        openBrowser("http://nodbg.com/debug/" + info.id);
+        openBrowser("http://www.nodbg.com/debug/" + info.id);
     });
 };
 
@@ -210,7 +210,7 @@ var doLocal = function(cmd, config) {
     
 program
     .command('remote [cmd]')
-    .description('debug and connect to nodbg.com')
+    .description('debug and connect to www.nodbg.com')
     .action(doRemote);
     
 program
@@ -220,7 +220,7 @@ program
 
 program
     .command('*')
-    .description('debug and connect to nodbg.com')
+    .description('debug and connect to www.nodbg.com')
     .action(doRemote);
     
 program

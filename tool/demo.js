@@ -57,17 +57,17 @@ var doRemote = function(cmd) {
     
     port = parseInt(port);
     
-    register("nodbg.com", function(err, info) {
+    register("www.nodbg.com", function(err, info) {
         if (err) {
             console.log("There was an error:", err);
             return;
         }
         
-        attachToChild("nodbg.com", info.debugport, port, pid, info.id);
+        attachToChild("www.nodbg.com", info.debugport, port, pid, info.id);
 
         var params = {
             name: info.id,
-            serverhost: "nodbg.com",
+            serverhost: "www.nodbg.com",
             serverport: program.serverport,
             debugserverport: info.debugport,
             debugport: port,
@@ -76,7 +76,7 @@ var doRemote = function(cmd) {
         
         console.log("- nodbg params:", JSON.stringify(params));
         console.log("- nodbg started!");
-        console.log("- Connect to http://nodbg.com/debug/" + info.id);
+        console.log("- Connect to http://www.nodbg.com/debug/" + info.id);
         console.log();
     });
 };
