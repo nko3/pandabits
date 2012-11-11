@@ -372,10 +372,11 @@
         },
         
         render: function() {            
-            this.$el.html(_.template(CommandContentView.template, {
+            this.$el.html(_.template(BreakpointCommandContentView.template, {
                 original: this.content.original,
                 error: this.content.error,
-                data: this.content.data
+                data: this.content.data,
+                isAdd: this.content.type === "setbreakpoint"
             }));
             
             return this;
@@ -387,8 +388,10 @@
 </div> \
 <% if(error) { %> \
     <%= error %> \
-<% } else { %> \
+<% } else if (isAdd) { %> \
     <span><%= data.breakpoint %>: </span><%= data.script_name %>:<%= data.line %> \
+<% } else { %> \
+    <span>Breakpoint \'<%= data.breakpoint %>\' was removed \
 <% } %> \
 '
     });
