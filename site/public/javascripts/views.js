@@ -853,7 +853,10 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
             var control = $(e.currentTarget).data("control");
             console.log("APP", App.isPaused, control);
             
-            if (!App.isPaused) {
+            if (App.isPaused === "start") {
+                App.sendMessage("!" + control);
+            }
+            else if (!App.isPaused) {
                 switch(control) {
                     case "pause":
                     case "backtrace":
