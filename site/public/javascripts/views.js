@@ -186,6 +186,8 @@
             this.$("ul.nav").scrollLeft(
                 currentOffset + $target.parent().offset().left
             );
+            
+            this.$(".file-header").text(file.get("path"));
         },
         
         onFileAdded: function(file) {
@@ -233,10 +235,11 @@
         },
         
         addFileTab: function(file, view) {
+            var path = file.get("path") || "";
             var template = '<li><a href="#file-tab-content<%= id %>" data-file="<%= path %>" data-toggle="tab"><%= path %></a></li>';
             this.$("ul.nav").append($(_.template(template, {
                 id: file.cid,
-                path: file.get("path")
+                path: path.slice(path.lastIndexOf("/") + 1)
             })));
             
             this.$(".tab-content").append(view.render().el);
@@ -263,6 +266,7 @@
         }
     },{
         template: ' \
+<div class="file-header"></div> \
 <div class="tab-content"></div> \
 <ul class="nav nav-tabs"> \
 <% _.each(infos, function(info) { %> \

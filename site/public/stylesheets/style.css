@@ -19,6 +19,17 @@ a {
     height: 100%;
 }
 
+.file-tabs .file-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: whitesmoke;
+    z-index: 100;
+    padding: 2px;
+    font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif
+}
+
 .file-tabs ul.nav {
     margin-top: 9px;
     width: 100%;
@@ -35,12 +46,11 @@ a {
     border: 1px solid #DDD;
 }
 
-.file-tabs .tab-content .tab-pane {
-    height: 100%;
+.file-tabs .tab-content .tab-pane {   
+    padding-top: 24px;
 }
 
 .file-tabs pre {
-    height: 95%;
     white-space: pre;
     word-break: normal;
     word-wrap: normal;
