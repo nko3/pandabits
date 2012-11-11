@@ -179,5 +179,10 @@ program
     .command('local [cmd]')
     .description('debug and connect locally')
     .action(doLocal);
+
+program
+    .command('*')
+    .description('debug and connect to nodbg.com')
+    .action(doRemote);
     
 program.parse(process.argv);
