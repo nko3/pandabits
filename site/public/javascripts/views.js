@@ -744,15 +744,30 @@ Debugger is now paused (<%= data.data.script.name %>:<%=data.data.sourceLine %>)
                       
             return this;
         },
+        
+        events: {
+            "click li a": "onToolbarActionClicked"
+        },
+        
+        onToolbarActionClicked: function(e) {
+            var control = $(e.currentTarget).data("control");
+            
+            if (control !== "pause" && App.isPaused) {
+                App.sendMessage("!" + control);
+            }
+            else if (control === "pause" && !App.isPaused) {
+                App.sendMessage("!" + control);
+            }
+        }
     },{
         template: ' \
 <div class="navbar-inner"> \
     <ul class="nav"> \
-        <li class=""><a href="#" title="continue"><i class="icon-play"></i></a></li> \
-        <li class=""><a href="#" title="pause"><i class="icon-pause"></i></a></li> \
-        <li class=""><a href="#" title="step in"><i class="icon-chevron-down"></i></a></li> \
-        <li class=""><a href="#" title="step out"><i class="icon-chevron-up"></i></a></li> \
-        <li class=""><a href="#" title="step into"><i class="icon-chevron-right"></i></a></li> \
+        <li class=""><a href="#" data-control="go" title="continue"><i class="icon-play"></i></a></li> \
+        <li class=""><a href="#" data-control="pause" title="pause"><i class="icon-pause"></i></a></li> \
+        <li class=""><a href="#" data-control="stepin" title="step in"><i class="icon-chevron-down"></i></a></li> \
+        <li class=""><a href="#" data-control="stepout" title="step out"><i class="icon-chevron-up"></i></a></li> \
+        <li class=""><a href="#" data-control="stepover" title="step over"><i class="icon-chevron-right"></i></a></li> \
     </ul> \
 </div> \
 '
