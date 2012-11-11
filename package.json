@@ -1,10 +1,13 @@
 {
-  "name": "nko3-pandabits",
-  "version": "0.0.2-23",
-  "description": "Pandabits",
-  "main": "server.js",
+  "name": "nodbg",
+  "version": "0.0.3",
+  "description": "social debugging",
+  "main": "tool/cli.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node tool/cli.js"
+  },
+  "bin": {
+    "nodbg": "tool/cli.js"
   },
   "repository": {
     "type": "git",
@@ -29,5 +32,6 @@
   "domains": [
     "nodbg.com",
     "www.nodbg.com"
-  ]
+  ],
+  "preferGlobal": true
 }

@@ -102,7 +102,7 @@ var debugServer = net.createServer(function(c) {
 });
 debugServer.listen(DEBUG_PORT);
 
-var ids = 0;
+var ids = 1;
 app.get('/register', function(req, res) {
   var namespace = req.query.namespace || "debug" + ids++;
   
