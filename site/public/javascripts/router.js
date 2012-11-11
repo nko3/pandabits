@@ -7,6 +7,7 @@
     window.App.Router = Router;
     
     window.App.currentFrame = 0;
+    window.App.isPaused = "start";
     
     window.App.sendMessage = function(message, silent) {
         message = {
