@@ -181,7 +181,13 @@
         },
         
         onActiveFileChanged: function(file) {
-            this.$("a[href=#file-tab-content" + file.cid + "]").click();
+            var $target = this.$("a[href=#file-tab-content" + file.cid + "]");
+            $target.click();
+            
+            var currentOffset = this.$("ul.nav").scrollLeft();
+            this.$("ul.nav").scrollLeft(
+                currentOffset + $target.parent().offset().left
+            );
         },
         
         onFileAdded: function(file) {

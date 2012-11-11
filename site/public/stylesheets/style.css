@@ -21,6 +21,13 @@ a {
 
 .file-tabs ul.nav {
     margin-top: 9px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.file-tabs ul.nav li {
+    display: table-cell;
+    float: none;
 }
 
 .file-tabs .tab-content {
