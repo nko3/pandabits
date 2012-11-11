@@ -91,10 +91,11 @@ debugServer.listen(8888);
 
 var ids = 0;
 app.get('/register', function(req, res) {
-  var namespace = "foo";
+  var namespace = "debug" + ids++;
   
   res.json({
-    id: namespace
+    id: namespace,
+    debugport: 8888
   })
 });
 
