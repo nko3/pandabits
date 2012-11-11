@@ -82,6 +82,26 @@ var listenOnNamespace = function(namespace) {
       io.of("/" + namespace).emit(type, message);
     });
   });
+  
+  translator.fixStdout(
+    function stdoutHook(str) {
+      console.log("hook1", str);
+      
+      routes.onStdout(str, function(type, message) {
+        console.log("stdout", message);
+        io.of("/" + namespace).emit(type, message);
+      });
+    },
+    function stderrHook(str) {
+      routes.onStderr(str, function(type, message) {
+        console.log("stderr", message);
+        io.of("/" + namespace).emit(type, message);
+      });
+    },
+    function() {
+      console.log("DONE", arguments); 
+    }
+  );
 };
 
 server.listen(app.get('port'), function() {

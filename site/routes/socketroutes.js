@@ -62,5 +62,31 @@ module.exports = {
         message.content.error = null;
         message.content.data = br;
         broadcast("message", message);
+    },
+    
+    "onStdout": function(str, broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System - stdout";
+        message.silent = false;
+        message.content = {};
+        message.content.type = "command";
+        message.content.error = null;
+        message.content.data = str;
+        broadcast("message", message);
+    },
+    
+    "onStdErr": function(str, broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System - stderr";
+        message.silent = false;
+        message.content = {};
+        message.content.type = "command";
+        message.content.error = null;
+        message.content.data = str;
+        broadcast("message", message);
     }
 };
