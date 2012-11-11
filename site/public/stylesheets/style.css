@@ -222,11 +222,16 @@ a {
     color: red;
 }
 
+.user-form {
+    position: relative;
+}
+
 .user-form input {
     text-align: right;
     background: transparent;
     border: 0px;
     color: white;
+    padding-right: 25px;
 }
 
 .user-form input:hover {
@@ -247,9 +252,16 @@ a {
 }
 
 .user-form .edit-pencil {
+    position: absolute;
+    right: 5px;
+    top: 15px;
     color: white;
     line-height: 0px;
     text-decoration: none
+}
+
+.user-form input:focus + .edit-pencil  {
+    display: none;
 }
 
 .backtrace-table {
@@ -297,4 +309,13 @@ a {
 
 .help-sign td.help-key {
     padding-right: 6px;
+}
+
+.navbar .brand {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.navbar .brand img {
+    height: 39px;
 }
