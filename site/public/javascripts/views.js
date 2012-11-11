@@ -58,12 +58,11 @@
             
             App.breakpoints.on("add", this.onBreakpointAdded, this);
             App.breakpoints.on("remove", this.onBreakpointRemoved, this);
+            this.model.on("change:highlight", this.highlightLine, this);
         },
         
         onBreakpointRemoved: function(breakpoint) {
-            console.log("REMOVING B")
             if (breakpoint.get("script_name") !== this.model.get("path")) {
-                console.log("EXITING");
                 return;
             }
             
@@ -86,6 +85,20 @@
             $target.removeClass("icon-blank");
             $target.addClass("icon-exclamation-sign");
             this.$("pre span[data-line=" + line + "]").addClass("breakpointset");
+        },
+        
+        highlightLine: function() {
+            var prevLine = this.model.previous("highlight");
+            var line = this.model.get("highlight");
+            
+            this.$("pre span[data-line=" + prevLine + "]").removeClass("currentline");
+            
+            if (this.model.has("highlight")) {
+                var highlightedLine = this.$("pre span[data-line=" + line + "]");
+                highlightedLine.addClass("currentline");
+                
+                this.$el.parent().scrollTop(highlightedLine.offset().top);
+            }
         },
         
         render: function() {
@@ -160,6 +173,12 @@
             this.collection.on("add", this.onFileAdded, this);  
             this.collection.on("remove", this.onFileRemoved, this);
             this.collection.on("reset", this.onFilesReset, this);
+            
+            App.on("change:active", this.onActiveFileChanged, this);
+        },
+        
+        onActiveFileChanged: function(file) {
+            this.$("a[href=#file-tab-content" + file.cid + "]").click();
         },
         
         onFileAdded: function(file) {
@@ -213,9 +232,9 @@
                 path: file.get("path")
             })));
             
-            this.ensureTabSelected();
-            
             this.$(".tab-content").append(view.render().el);
+            
+            this.ensureTabSelected();
         },
         
         removeFileTab: function(file, view) {
@@ -231,7 +250,7 @@
             var tabs = this.$(".nav li.active");
             
             if (tabs.length === 0) {
-                this.$(".nav li a").first().click();
+                this.$(".nav li a").last().click();
                 //this.$(".tab-content div.tab-pane").first().addClass("active");
             }
         }
@@ -494,6 +513,7 @@
         "removebreakpoint": BreakpointCommandContentView,
         "listbreakpoints": ListBreakpointsContentView,
         "loadfile": CommandContentView,
+        "break": CommandContentView,
         "command": CommandContentView
     };
     

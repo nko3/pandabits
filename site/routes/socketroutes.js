@@ -49,5 +49,18 @@ module.exports = {
             // Send back the server-set ID and time
             //fn({id: message.id, time: message.time, content: message.content});
         });        
+    },
+    
+    "onBreak": function(br, broadcast) {
+        message = {};
+        message.time = (new Date()).toString();
+        message.id = messageId++;
+        message.user = "System";
+        message.silent = true;
+        message.content = {};
+        message.content.type = "break";
+        message.content.error = null;
+        message.content.data = br;
+        broadcast("message", message);
     }
 };

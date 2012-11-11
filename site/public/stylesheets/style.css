@@ -51,6 +51,10 @@ a {
     background-color: #FDD;
 }
 
+.file-tabs pre span.currentline {
+    background-color: #EE9;
+}
+
 .file-table td.linenos {
     margin: 0;
     padding-right: 0.5em;
