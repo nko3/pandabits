@@ -52,11 +52,20 @@ a {
     margin-top: 9px;
     width: 100%;
     overflow-x: auto;
+    border: 0px;
 }
 
 .file-tabs ul.nav li {
     display: table-cell;
     float: none;
+    border-top: 1px solid #DDD;
+}
+.file-tabs ul.nav li.active {
+    border-top: 0px;
+}
+
+.file-tabs ul.nav li a {
+    margin-bottom: 2px;
 }
 
 .file-tabs .tab-content {
